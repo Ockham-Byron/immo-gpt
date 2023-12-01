@@ -1,0 +1,35 @@
+
+
+{% for message in messages %}
+  <div id="notification-modal" class="modal fade" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <strong class="mr-auto">
+        {% if message.tags == 'error' %}
+          <i class="fas fa-times mr-2"></i>
+        {% elif message.tags == 'warning' %}
+          <i class="fas fa-exclamation mr-2"></i>
+        {% elif message.tags == 'info' %}
+          <i class="fas fa-info mr-2"></i>
+        {% elif message.tags == 'success' %}
+          <i class="fas fa-check mr-2"></i>
+        {% endif %}
+        {{message.tags|capfirst}}
+      </strong>
+          {% if message.extra_tags %}
+          <h6 class="modal-title">{{message.extra_tags}}</h6>
+          {% endif %}
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{message|safe}}</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endfor %}
+

@@ -1,0 +1,25 @@
+
+
+/* Layout */
+
+#dashboard-page {
+  background-color: var(--lightest-color);
+  padding:0 !important;
+  min-height: 100%;
+}
+
+/* Sidebar */
+#sidebar{
+  background-color: var(--darkest-color) !important;
+}
+img#sidebar-logo {
+  width:40px;
+}
+
+@media  screen and (max-width:767px) {
+  #sidebar {
+    height: 55px;
+  }
+}
+
+
