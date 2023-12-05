@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'users',
     'dashboard',
     'pages',
+    'classifieds',
     
 ]
 

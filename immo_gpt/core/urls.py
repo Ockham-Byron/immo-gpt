@@ -26,6 +26,7 @@ urlpatterns = i18n_patterns(
     path('i18n/', include('django.conf.urls.i18n')),
     path('', include('users.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('classifieds/', include('classifieds.urls')),
     path('pages/', include('pages.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
