@@ -4,8 +4,18 @@
 
 #dashboard-page {
   background-color: var(--lightest-color);
-  padding:0 !important;
+  padding:0px !important;
   min-height: 100%;
+}
+
+main {
+  padding:20px !important;
+}
+
+@media screen and (min-width: 1025px) {
+  main {
+    padding:50px !important;
+  }
 }
 
 /* Sidebar */

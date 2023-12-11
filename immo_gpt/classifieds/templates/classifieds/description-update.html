@@ -1,0 +1,29 @@
+{% extends 'dashboard/base.html'%}
+{% load i18n %}
+
+{% block title%}{% trans 'Simple update' %} {% endblock%}
+
+{% block content %}
+<!-- Form -->
+<div class="d-flex align-items-center justify-content-center vh-90">
+  <form class="kform" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <p class="title">{% trans 'Simple update' %}</p>
+    
+      <input type="text" name="style" placeholder="Style" maxlength="100" id="id_name">
+
+
+ 
+        
+      
+      <button class="submit" type="submit ">Submit</button>
+      <div class="text-center">
+        <a href="/en/dashboard/" class="mid-color">Cancel</a>
+      </div>
+  </form>
+</div>
+
+
+
+{% endblock %}

@@ -1,5 +1,5 @@
 import os
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from openai import OpenAI
 
@@ -7,7 +7,7 @@ from .models import Home, Classified
 
 client = OpenAI(api_key=os.environ.get("API_KEY"),)
 
-def create_simple_update_classified(style, text):
+def create_description_update_classified(style, text):
    response = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
@@ -27,7 +27,7 @@ def create_simple_update_classified(style, text):
    return response.choices[0].message.content
 
 # Create your views here.
-def simple_update_classified(request):
+def simple_update_classified_without_home(request):
 
   if request.method == 'POST':
     
@@ -39,7 +39,7 @@ def simple_update_classified(request):
 
    
     
-    text = create_simple_update_classified(style, description)
+    text = create_description_update_classified(style, description)
     print(text)
 
     
@@ -53,6 +53,25 @@ def simple_update_classified(request):
     
   return render(request, 'classifieds/simple-update.html')
 
+def description_update(request, slug):
+  home = get_object_or_404(Home, slug=slug)
+  classifieds = Classified.objects.filter(home=home)
+  classified = Classified.objects.get(home=home, version=1)
+  
+  if request.method == 'POST':
+    new_version = classifieds.count() + 1
+    style = request.POST.get('style')
+    description = classified.text
+    text = create_description_update_classified(style, description)
+    new_classified = Classified(text=text, home=home, version=new_version)
+    new_classified.save()  
+    return redirect('home-detail', slug=slug)
+
+  context = {'home': home,
+             'classified':classified}
+
+  return render(request, 'classifieds/description-update.html', context=context)
+
 def add_home(request):
   return render(request, 'classifieds/home-create.html')
 
@@ -65,9 +84,17 @@ def agent_homes(request):
 
 def home_detail(request, slug):
   home = get_object_or_404(Home, slug=slug)
-  classified = get_object_or_404(Classified, home=home)
+  if Classified.objects.filter(home=home).exists():
+    classifieds = Classified.objects.filter(home=home)
+    last_classified = classifieds.latest('created_at')
+    classifieds = classifieds.order_by('-created_at')[1:]
+  else:
+    classifieds = None
+    last_classified = None
 
   context = {'home':home,
-             'classified':classified}
+             'classifieds':classifieds,
+             'last_classified' :last_classified,
+             }
 
   return render(request, 'classifieds/home-detail.html', context=context)

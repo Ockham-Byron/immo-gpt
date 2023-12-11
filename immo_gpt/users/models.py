@@ -18,13 +18,7 @@ def path_and_rename(instance, filename):
     # return the whole path to the file
     return os.path.join(upload_to, filename)
 
-class Style(models.Model):
-   id = models.UUIDField(default=uuid4, editable=False, primary_key=True)
-   short_description = models.CharField(max_length=200, blank=False, null=False)
-   long_description = models.TextField(blank=False, null=False)
 
-   def __str__(self):
-      return self.short_description
 
 class CustomUser(AbstractUser):
     AVATAR = (
@@ -48,8 +42,6 @@ class CustomUser(AbstractUser):
     profile_pic = models.ImageField(blank=True, null=True, upload_to=path_and_rename)
     is_rgpd = models.BooleanField(default=False)
     email_is_verified = models.BooleanField(default=False)
-    style = models.OneToOneField(Style, related_name="style", on_delete=models.CASCADE, blank=True, null=True)
-    my_styles = models.ManyToManyField(Style, related_name="my_styles", blank=True)
     slug = models.SlugField(max_length=255, unique= True, default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

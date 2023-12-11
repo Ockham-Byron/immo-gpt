@@ -4,7 +4,10 @@ Classified:
   ☐ widget attente
   ☐ message réussite
   ☐ aller sur la page des annonces
+  
 
 Home:
   ☐ bouton copier-coller description
+  ☐ changer slug quand change de nom
+  ✔ mettre les versions dans le sens inverse @done(23-12-14 11:25)
   

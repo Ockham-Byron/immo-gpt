@@ -44,7 +44,7 @@ class Home(models.Model):
   
   name = models.CharField(max_length=150, blank=False, null=False)
   price = models.FloatField(blank=False, null=False)
-  features = models.ManyToManyField(HomeFeature)
+  features = models.ManyToManyField(HomeFeature, blank=True)
   nb_pieces = models.IntegerField(null=True, blank=True)
   nb_rooms = models.IntegerField(null=True, blank=True)
   surface = models.IntegerField(null=True, blank=True)
@@ -65,9 +65,20 @@ class Home(models.Model):
             self.slug = slugify(self.name + '_' + str(self.id))
         super(Home, self).save(*args, **kwargs)
 
+class Style(models.Model):
+   id = models.UUIDField(default=uuid4, editable=False, primary_key=True)
+   agent = models.ForeignKey(User, on_delete=models.CASCADE)
+   is_agent_style = models.BooleanField(default=False)
+   short_description = models.CharField(max_length=200, blank=False, null=False)
+   long_description = models.TextField(blank=False, null=False)
+
+   def __str__(self):
+      return self.short_description
+
 class Classified(models.Model):
   id = models.UUIDField(default = uuid4, editable = False, primary_key=True)
-  home = models.OneToOneField(Home, on_delete=models.CASCADE, related_name="classified", null=True, blank=True)
+  home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name="classified", null=True, blank=True)
+  style = models.ForeignKey(Style, on_delete=models.PROTECT, null=True, blank=True )
   text = models.TextField(blank=False, null=False)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
