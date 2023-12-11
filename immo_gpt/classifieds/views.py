@@ -1,5 +1,6 @@
 import os
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from openai import OpenAI
 
 from .models import Home, Classified
@@ -51,3 +52,22 @@ def simple_update_classified(request):
 
     
   return render(request, 'classifieds/simple-update.html')
+
+def add_home(request):
+  return render(request, 'classifieds/home-create.html')
+
+def agent_homes(request):
+  homes = Home.objects.filter(agent=request.user)
+
+  context = {'homes':homes,}
+
+  return render(request, 'classifieds/agent-homes.html', context=context)
+
+def home_detail(request, slug):
+  home = get_object_or_404(Home, slug=slug)
+  classified = get_object_or_404(Classified, home=home)
+
+  context = {'home':home,
+             'classified':classified}
+
+  return render(request, 'classifieds/home-detail.html', context=context)

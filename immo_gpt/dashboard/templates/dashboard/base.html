@@ -12,7 +12,8 @@
     <!-- Custom Css Files-->
     <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/forms.css' %}">
-     <link rel="stylesheet" href="{% static 'assets/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/classifieds.css' %}">
     
 
     <!--Font awesome icons -->
@@ -36,7 +37,7 @@
 
       {% include 'dashboard/includes/sidebar.html' %}
       <div id="dashboard-page" class="col d-flex flex-column">
-        <main class="row align-items-center h-100">
+        <main class="row align-items-center justify-content-center h-100">
           {% block content %}{% endblock %}
         </main>
         {% include 'users/includes/footer.html' %}

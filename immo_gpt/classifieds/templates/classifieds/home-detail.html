@@ -1,0 +1,23 @@
+{% extends "dashboard/base.html" %}
+
+{% load i18n %}
+
+{% block title%} {% endblock%}
+
+{% block content %}
+
+<h1 class="text-center">{{home.name}}</h1>
+
+<div class="large-card">
+<h4>{% trans 'Details' %}</h4>
+
+</div>
+
+<div class="large-card">
+<h4>{% trans 'Description' %}</h4>
+{% if classified %}
+<p>{{classified.text }}</p>
+{% endif %}
+</div>
+
+{% endblock %}

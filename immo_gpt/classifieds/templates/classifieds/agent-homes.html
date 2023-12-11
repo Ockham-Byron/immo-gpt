@@ -1,0 +1,54 @@
+{% extends "dashboard/base.html" %}
+
+{% load i18n %}
+
+{% block title%} {% endblock%}
+
+{% block content %}
+
+
+
+<h1 class="text-center">{% trans 'Homes' %}</h1>
+
+
+
+  {% for object in homes %}
+  <div class="kcard mt-3 mx-2">
+    <div class="top-section">
+      <div class="border"></div>
+      <div class="icons">
+      <div class="logo"></div>
+        <div class="social-media">
+        <a href="{% url 'home-detail' object.slug %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10.605" height="15.555"><path d="m2.828 15.555 7.777-7.779L2.828 0 0 2.828l4.949 4.948L0 12.727l2.828 2.828z"/></svg>
+        </svg>
+        </a>
+      </div>
+      </div>
+      <h6 class="text-center my-auto">{{object.name}}</h6>
+    </div>
+    <div class="bottom-section">
+      <span class="title">UNIVERSE OF UI</span>
+      <div class="row row1">
+        <div class="item">
+          <span class="big-text">2626</span>
+          <span class="regular-text">UI elements</span>
+        </div>
+        <div class="item">
+          <span class="big-text">100%</span>
+          <span class="regular-text">Free for use</span>
+        </div>
+        <div class="item">
+          <span class="big-text">38,631</span>
+          <span class="regular-text">Contributers</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+
+
+
+
+{% endblock %}
