@@ -1,9 +1,10 @@
 import os
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
+from .forms import AddHomeForm
 from openai import OpenAI
 
-from .models import Home, Classified
+from .models import Home, Classified, Style
 
 client = OpenAI(api_key=os.environ.get("API_KEY"),)
 
@@ -13,7 +14,7 @@ def create_description_update_classified(style, text):
     messages=[
     {
       "role": "system",
-      "content": "You will be provided with a real estate classified, and your task is to rewrite it using the following style: " + style
+      "content": "You will be provided with a real estate classified and your task is to rewrite it using the following style: " + style + " in French."
     },
     {
       "role": "user",
@@ -54,26 +55,45 @@ def simple_update_classified_without_home(request):
   return render(request, 'classifieds/simple-update.html')
 
 def description_update(request, slug):
-  home = get_object_or_404(Home, slug=slug)
+  classified = Classified.objects.get(slug=slug)
+  home = classified.home
   classifieds = Classified.objects.filter(home=home)
-  classified = Classified.objects.get(home=home, version=1)
+  styles = Style.objects.filter(agent = None) | Style.objects.filter(agent=request.user)
+  styles = styles.exclude(pk=classified.style.pk)
+  
   
   if request.method == 'POST':
     new_version = classifieds.count() + 1
-    style = request.POST.get('style')
+    style_input = request.POST.get('style')
+    style=Style.objects.get(pk=style_input)
     description = classified.text
-    text = create_description_update_classified(style, description)
-    new_classified = Classified(text=text, home=home, version=new_version)
+    text = create_description_update_classified(style.long_description, description)
+    new_classified = Classified(text=text, home=classified.home, style=style, version=new_version)
     new_classified.save()  
-    return redirect('home-detail', slug=slug)
+    return redirect('home-detail', slug=home.slug)
 
   context = {'home': home,
-             'classified':classified}
+             'classified':classified, 
+             'styles':styles}
 
   return render(request, 'classifieds/description-update.html', context=context)
 
 def add_home(request):
-  return render(request, 'classifieds/home-create.html')
+  form = AddHomeForm()
+
+  if request.method == 'POST':
+    form = AddHomeForm(request.POST)
+    if form.is_valid():
+      form = AddHomeForm(request.POST)
+      home = form.save(commit=False)
+      home.agent = request.user
+      home.save()
+      return redirect('home-detail', slug=home.slug)
+  else:
+      for error in list(form.errors.values()):
+          print(request, error)
+  
+  return render(request, 'classifieds/home-create.html', {'form': form})
 
 def agent_homes(request):
   homes = Home.objects.filter(agent=request.user)

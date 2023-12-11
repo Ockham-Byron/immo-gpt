@@ -53,17 +53,30 @@
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <p class="small">{% trans 'Edit' %}</p>
                                 </a>
-                                <a href ="{% url 'description-update' home.slug%}" class="icon-button ms-2 text-center mid-color">
+                                <a href ="{% url 'description-update' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'New from this version' %}</p>
                                 </a>
                             </div>
                             <p>{{last_classified.updated_at|date:"d b Y"}}</p>
+                            <p>{% trans "Style: "%} {{last_classified.style}}</p>
                             {{last_classified.text}}
                         </div>
                         {% for classified in classifieds %}
                         <div class="k-tab-pane tab-pane fade shadow " id="description-version{{classified.version}}" role="tabpanel">
-                            <h4 class="dark-color">{% trans 'Version' %} {{classified.version}}</h4>
+                            <div class="d-flex flex-row">
+                                <h4 class="dark-color">{% trans 'Version' %} {{classified.version}}</h4>
+                                <a href ="#" class="icon-button ms-2 text-center darkest-color">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    <p class="small">{% trans 'Edit' %}</p>
+                                </a>
+                                <a href ="{% url 'description-update' classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p class="small">{% trans 'New from this version' %}</p>
+                                </a>
+                            </div>
+                             <p>{{classified.updated_at|date:"d b Y"}}</p>
+                            <p>{% trans "Style: "%} {{classified.style}}</p>
                             {{classified.text}}
                         </div>
                         {% endfor %}

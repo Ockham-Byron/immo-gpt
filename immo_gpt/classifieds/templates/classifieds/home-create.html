@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html'%}
 {% load i18n %}
 
-{% block title%}{% trans 'Simple update' %} {% endblock%}
+{% block title%}{% trans 'Add Home' %} {% endblock%}
 
 {% block content %}
 <!-- Form -->
@@ -9,21 +9,20 @@
   <form class="kform" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     
-    <p class="title">{% trans 'Simple update' %}</p>
+    <p class="title">{% trans 'Add Home' %}</p>
     
-      <input type="text" name="style" placeholder="Style" maxlength="100" id="id_name">
+      {{form.name}}
 
-      <p class="label mt-3">{% trans "Paste the classified's description you want to change: " %}</p>
+      {{form.price}}
     
-        <textarea name="text" cols="40" rows="5" placeholder={% trans "Paste here" %} id="id_classified">
-</textarea>
+       
 
  
         
       
       <button class="submit" type="submit ">Submit</button>
       <div class="text-center">
-        <a href="/en/dashboard/" class="mid-color">Cancel</a>
+        <a href="{% url 'dashboard' %}" class="mid-color">Cancel</a>
       </div>
   </form>
 </div>

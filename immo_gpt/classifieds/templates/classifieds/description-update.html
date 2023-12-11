@@ -10,9 +10,15 @@
     {% csrf_token %}
     
     <p class="title">{% trans 'Simple update' %}</p>
-    
-      <input type="text" name="style" placeholder="Style" maxlength="100" id="id_name">
 
+      <select class="form-select" name="style">
+        <option selected value="{{classified.style.pk}}">{% trans "Same style" %} ({{classified.style}})</option>
+        {% for style in styles %}
+        <option value="{{style.pk}}">{{style.short_description}}</option>
+        {% endfor %}
+      </select>
+
+      <a href="#">{% trans 'Add style' %}</a>
 
  
         

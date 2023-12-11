@@ -67,7 +67,7 @@ class Home(models.Model):
 
 class Style(models.Model):
    id = models.UUIDField(default=uuid4, editable=False, primary_key=True)
-   agent = models.ForeignKey(User, on_delete=models.CASCADE)
+   agent = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
    is_agent_style = models.BooleanField(default=False)
    short_description = models.CharField(max_length=200, blank=False, null=False)
    long_description = models.TextField(blank=False, null=False)
