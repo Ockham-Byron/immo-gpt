@@ -8,6 +8,45 @@ from .models import Home, Classified, Style
 
 client = OpenAI(api_key=os.environ.get("API_KEY"),)
 
+def define_style_from_reference(text):
+  response = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+    {
+      "role": "system",
+      "content": "You will be provided with a text and your task is to describe its style. You will give an exhaustive description of the style."
+    },
+    {
+      "role": "user",
+      "content": text
+    }
+    ],
+    temperature=0.7,
+    top_p=1
+    )
+  
+  return response.choices[0].message.content
+
+def give_style_short_description(style):
+  response = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+    {
+      "role": "system",
+      "content": "You will be provided with a description of a style. You will give a short description of maximum two words of this style."
+    },
+    {
+      "role": "user",
+      "content": style
+    }
+    ],
+    temperature=0.7,
+    top_p=1
+    )
+  
+  return response.choices[0].message.content
+
+
 def create_description_update_classified(style, text):
    response = client.chat.completions.create(
     model="gpt-3.5-turbo",
@@ -28,6 +67,17 @@ def create_description_update_classified(style, text):
    return response.choices[0].message.content
 
 # Create your views here.
+def define_style(request, slug):
+  classified = get_object_or_404(Classified, slug=slug)
+
+  long_description = define_style_from_reference(classified.text)
+  short_description = give_style_short_description(long_description)
+  style = Style(agent=request.user, short_description = short_description, long_description=long_description)
+  style.save()
+  classified.style = style
+  classified.save()
+  return render(request, "classifieds/all-styles.html")
+
 def simple_update_classified_without_home(request):
 
   if request.method == 'POST':
@@ -104,6 +154,18 @@ def agent_homes(request):
 
 def home_detail(request, slug):
   home = get_object_or_404(Home, slug=slug)
+  is_complete = False
+  is_detailed = False
+
+
+  if home.features.count() > 0 or home.nb_pieces != None  or home.nb_rooms != None  or home.nb_floors != None or home.city != None or home.neighborhood != None:
+    is_detailed = True
+
+  if home.features.count() > 0 and home.nb_pieces  and home.nb_rooms  and home.nb_floors and home.city and home.neighborhood:
+    is_complete = True
+
+  print(is_complete)
+  
   if Classified.objects.filter(home=home).exists():
     classifieds = Classified.objects.filter(home=home)
     last_classified = classifieds.latest('created_at')
@@ -115,6 +177,8 @@ def home_detail(request, slug):
   context = {'home':home,
              'classifieds':classifieds,
              'last_classified' :last_classified,
+             'is_complete':is_complete,
+             'is_detailed':is_detailed,
              }
 
   return render(request, 'classifieds/home-detail.html', context=context)

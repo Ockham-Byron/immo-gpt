@@ -6,11 +6,87 @@
 
 {% block content %}
 
-<h1 class="text-center">{{home.name}}</h1>
+<div class="d-flex flex-column">
+    <h1 class="text-center">{{home.name}}</h1>
+    <div class="d-flex justify-content-center">
+        <p class = "home-tag mx-2">{{home.surface}} m2 </p>
+        <p class = "home-tag mx-2">{{home.price}} € </p>
+    </div>
+</div>
 
 <div class="large-card">
-<h4>{% trans 'Details' %}</h4>
+    <div class="d-flex flex-row">
+        <h4>{% trans 'Details' %}</h4>
+        {% if is_detailed%}
+        <a href ="#" class="icon-button ms-2 text-center darkest-color">
+            <i class="fa-solid fa-pen-to-square"></i>
+        <p class="small">{% trans 'Edit' %}</p>
+        {% endif %}
 
+        {% if is_complete%}
+
+        {% else %}
+        <a href ="#" class="icon-button ms-2 text-center darkest-color">
+    <i class="fa-solid fa-add"></i>
+    <p class="small">{% trans 'Complete' %}</p>
+        {% endif %}
+    </div>
+
+    <table class="table details-table">
+  
+  <tbody>
+    <tr>
+      <th scope="row">{% trans "City" %}</th>
+      {% if home.city %}
+      <td class="home-info">{{home.city}}</td>
+      <td><i class="fa-solid fa-pen"</i></td>
+      {% else %}
+      <td class="home-info">-</td>
+      <td><i class="fa-solid fa-add"</i></td>
+      {% endif %}
+    </tr>
+    <tr>
+       <th scope="row">{% trans "Neighborhood" %}</th>
+      {% if home.neighborood %}
+      <td class="home-info">{{home.neighborood}}</td>
+      <td><i class="fa-solid fa-pen"</i></td>
+      {% else %}
+      <td  class="home-info">-</td>
+      <td><i class="fa-solid fa-add"</i></td>
+      {% endif %}
+    </tr>
+    <tr>
+       <th scope="row">{% trans "Number of pieces" %}</th>
+      {% if home.nb_pieces %}
+      <td class="home-info">{{home.nb_pieces}}</td>
+      <td><i class="fa-solid fa-pen"</i></td>
+      {% else %}
+      <td class="home-info">-</td>
+      <td><i class="fa-solid fa-add"</i></td>
+      {% endif %}
+    </tr>
+    <tr>
+       <th scope="row">{% trans "Number of rooms" %}</th>
+      {% if home.nb_rooms %}
+      <td class="home-info">{{home.nb_rooms}}</td>
+      <td><i class="fa-solid fa-pen"</i></td>
+      {% else %}
+      <td class="home-info">-</td>
+      <td><i class="fa-solid fa-add"</i></td>
+      {% endif %}
+    </tr>
+    <tr>
+       <th scope="row">{% trans "Number of floors" %}</th>
+      {% if home.nb_floors %}
+      <td class="home-info">{{home.nb_floors}}</td>
+      <td><i class="fa-solid fa-pen"</i></td>
+      {% else %}
+      <td class="home-info">-</td>
+      <td><i class="fa-solid fa-add"</i></td>
+      {% endif %}
+    </tr>
+  </tbody>
+</table>
 </div>
 
 
@@ -26,7 +102,7 @@
     </a>
 </div>
 
-{% if classifieds %}
+{% if last_classified %}
     <div class="mt-5">
         <div role="tabpanel">
             <div class="row">
@@ -53,15 +129,25 @@
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <p class="small">{% trans 'Edit' %}</p>
                                 </a>
+                                {% if last_classified.style %}
                                 <a href ="{% url 'description-update' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'New from this version' %}</p>
                                 </a>
+                                {% else %}
+                                <a href ="{% url 'define-style' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p class="small">{% trans 'Analyse the style of this text' %}</p>
+                                </a>
+                                {% endif %}
                             </div>
                             <p>{{last_classified.updated_at|date:"d b Y"}}</p>
+                            {% if last_classified.style %}
                             <p>{% trans "Style: "%} {{last_classified.style}}</p>
+                            {% endif %}
                             {{last_classified.text}}
                         </div>
+                        {% if classifieds %}
                         {% for classified in classifieds %}
                         <div class="k-tab-pane tab-pane fade shadow " id="description-version{{classified.version}}" role="tabpanel">
                             <div class="d-flex flex-row">
@@ -85,8 +171,16 @@
             </div>
         </div>
     </div>
-    
+{% endif %}
 {% endif %}
 
 
+<!-- Float button -->
+<a href="#" class="float btn" id="menu-share">
+<i class="fa fa-pen my-float"></i>
+<div class="label-container">
+<div class="label-text">{% trans 'Edit' %}</div>
+<i class="fa fa-play label-arrow"></i>
+</div>
+</a>
 {% endblock %}

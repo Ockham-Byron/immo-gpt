@@ -8,10 +8,18 @@
 <div class="d-flex align-items-center justify-content-center vh-90">
   <form class="kform" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    
+    {% if login_form.non_field_errors %}
+                <ul class='form-errors'>
+                    {% for error in login_form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
     <p class="title">{% trans 'Add Home' %}</p>
     
       {{form.name}}
+
+      {{form.surface}}
 
       {{form.price}}
     

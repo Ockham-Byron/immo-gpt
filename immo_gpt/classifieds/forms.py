@@ -4,17 +4,19 @@ from .models import Home
 
 class AddHomeForm(forms.ModelForm): 
   name = forms.CharField(widget=forms.TextInput(attrs={
-    'class': 'form-control',
-    'placeholder':_('Name'),
-    })),
+    "placeholder": _("Name")}))
+  
+  surface = forms.FloatField(widget=forms.TextInput(attrs={
+    "type": "number",
+    "placeholder": _("Surface -m2")
+  }))
   
   price = forms.FloatField(widget=forms.TextInput(attrs={
-    'type': 'number',
-    'class': 'form-control',
-    'placeholder': 'Price',
-    })),
+    "type": "number",
+    "placeholder": _("Price")
+    }))
 
   class Meta:
     model = Home
-    fields = ['name', 'price']
+    fields = ['name', 'price', 'surface']
                          
