@@ -35,37 +35,22 @@ class HomeFeature(models.Model):
   def __str__(self):
      return self.short_description
 
-class Classified(models.Model):
-  id = models.UUIDField(default = uuid4, editable = False, primary_key=True)
-  text = models.TextField(blank=False, null=False)
-  created_at = models.DateTimeField(auto_now_add=True)
-  updated_at = models.DateTimeField(auto_now=True)
-  slug = models.SlugField(max_length=255, unique= True, default=None, null=True)
 
-  def __str__(self):
-     return self.home.name
-  
-  def save(self, *args, **kwargs):
-        super().save()
-        # create slug
-        if not self.slug:
-            self.slug = slugify(self.home.name + '_' + str(_("classified")))
-        super(Classified, self).save(*args, **kwargs)
   
 
 class Home(models.Model):
   id = models.UUIDField(default = uuid4, editable=False, primary_key=True)
   agent = models.ForeignKey(User, on_delete=models.CASCADE)
-  classified = models.OneToOneField(Classified, on_delete=models.CASCADE, related_name="home")
+  
   name = models.CharField(max_length=150, blank=False, null=False)
   price = models.FloatField(blank=False, null=False)
   features = models.ManyToManyField(HomeFeature)
-  nb_pieces = models.IntegerField()
-  nb_rooms = models.IntegerField()
-  surface = models.IntegerField()
-  nb_floors = models.IntegerField()
-  city = models.CharField(max_length=150)
-  neighborhood = models.CharField(max_length=150)
+  nb_pieces = models.IntegerField(null=True, blank=True)
+  nb_rooms = models.IntegerField(null=True, blank=True)
+  surface = models.IntegerField(null=True, blank=True)
+  nb_floors = models.IntegerField(null=True, blank=True)
+  city = models.CharField(max_length=150, null=True, blank=True)
+  neighborhood = models.CharField(max_length=150, null=True, blank=True)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   slug = models.SlugField(max_length=255, unique= True, default=None, null=True)
@@ -80,12 +65,32 @@ class Home(models.Model):
             self.slug = slugify(self.name + '_' + str(self.id))
         super(Home, self).save(*args, **kwargs)
 
+class Classified(models.Model):
+  id = models.UUIDField(default = uuid4, editable = False, primary_key=True)
+  home = models.OneToOneField(Home, on_delete=models.CASCADE, related_name="classified", null=True, blank=True)
+  text = models.TextField(blank=False, null=False)
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  version = models.IntegerField(default=1)
+  slug = models.SlugField(max_length=255, unique= True, default=None, null=True)
+
+  def __str__(self):
+     return self.home.name
+  
+  def save(self, *args, **kwargs):
+        super().save()
+        # create slug
+        if not self.slug:
+            self.slug = slugify(self.home.name + '_' + str(_("classified") + '_' + str(self.id))) 
+        super(Classified, self).save(*args, **kwargs)
+
 class PieceOfHouse(models.Model):
   id = models.UUIDField(default = uuid4, editable=False, primary_key=True)
   home = models.ForeignKey(Home, related_name="pieces", on_delete=models.PROTECT)
   piece = models.ForeignKey(Piece, on_delete=models.CASCADE)
   surface = models.FloatField()
   features = models.ManyToManyField(PieceFeature)
+
 
 
   

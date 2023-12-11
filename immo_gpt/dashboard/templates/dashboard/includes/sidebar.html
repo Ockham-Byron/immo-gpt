@@ -35,6 +35,16 @@
               <a href="{% url 'dashboard' %}" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2 lightest-color">
                   <i class="fa-solid fa-gauge"></i><span class="ms-1 d-none d-sm-inline">{% trans 'Dashboard' %}</span> </a>
           </li>
+
+           <li class="dropdown">
+              <a href="#" class="nav-link dropdown-toggle px-sm-0 px-2 lightest-color" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-user-group"></i><span class="ms-1 d-none d-sm-inline">{% trans 'Classifieds' %}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
+                  <li><a class="dropdown-item lightest-color" href="#"><i class="fa-solid fa-plus pe-1"></i>{% trans 'Add Home' %}</a></li>
+                  <li><a class="dropdown-item lightest-color" href="{% url 'simple-update' %}">{% trans 'Simple update' %}</a></li>
+              </ul>
+          </li>
           
          
       </ul>
