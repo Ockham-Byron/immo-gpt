@@ -75,11 +75,14 @@ class Style(models.Model):
    def __str__(self):
       return self.short_description
 
+  
+
 class Classified(models.Model):
   id = models.UUIDField(default = uuid4, editable = False, primary_key=True)
   home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name="classified", null=True, blank=True)
   style = models.ForeignKey(Style, on_delete=models.PROTECT, null=True, blank=True )
   text = models.TextField(blank=False, null=False)
+  corrections = models.TextField(blank=True, null=True)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   version = models.IntegerField(default=1)

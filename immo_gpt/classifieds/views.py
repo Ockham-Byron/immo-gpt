@@ -1,6 +1,7 @@
 import os
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .forms import AddHomeForm
 from openai import OpenAI
 
@@ -8,13 +9,34 @@ from .models import Home, Classified, Style
 
 client = OpenAI(api_key=os.environ.get("API_KEY"),)
 
+def correct_with_explanations(text):
+  response = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+    {
+      "role": "system",
+      "content": "You are a language teacher. You will be provided with a text in a certain language and your task is to correct it and to explain the errors. You will recognize the grammatical errors and the mispelling. For each one, you will describe the error and explain its correction. The language of your response is the same as the language of the text."
+    },
+    {
+      "role": "user",
+      "content": text
+    }
+    ],
+    temperature=0.7,
+    top_p=1
+    )
+  
+  return response.choices[0].message.content.replace('\n', '<br />')
+  
+
+
 def define_style_from_reference(text):
   response = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
     {
       "role": "system",
-      "content": "You will be provided with a text and your task is to describe its style. You will give an exhaustive description of the style."
+      "content": "You will be provided with a text and your task is to describe its style. Step1: You will recognize the language of the text provided. Step2: You will give a precise description of the style. The description will be in the language recognized in step1 and of maximum 150 words. This style could be reused to write another text so the description of the style has to be general, with no details of the content."
     },
     {
       "role": "user",
@@ -67,7 +89,44 @@ def create_description_update_classified(style, text):
    return response.choices[0].message.content
 
 # Create your views here.
-def define_style(request, slug):
+@login_required
+def styles(request):
+  user = request.user
+  general_styles= Style.objects.filter(agent=None)
+  member_styles= Style.objects.filter(agent=user)
+
+  context = {
+    'general_styles':general_styles,
+    'member_styles':member_styles
+  }
+  return render(request, "classifieds/all-styles.html", context=context)
+
+@login_required
+def add_style(request):
+  if request.method=='POST':
+    short_description=request.POST.get('short_description')
+    long_description=request.POST.get('long_description')
+    style=Style(agent=request.user, short_description=short_description, long_description=long_description)
+    style.save()
+    return redirect('styles')
+
+  return render(request, "classifieds/define-style.html")
+
+@login_required
+def define_style_from_text(request):
+
+  if request.method == "POST":
+    text=request.POST.get("text")
+    long_description = define_style_from_reference(text)
+    short_description = give_style_short_description(long_description)
+    style = Style(agent=request.user, short_description = short_description, long_description=long_description)
+    style.save()
+    return redirect('styles')
+
+  return render(request, "classifieds/define-style-from-text.html")
+
+@login_required
+def define_style_from_classified(request, slug):
   classified = get_object_or_404(Classified, slug=slug)
 
   long_description = define_style_from_reference(classified.text)
@@ -182,3 +241,18 @@ def home_detail(request, slug):
              }
 
   return render(request, 'classifieds/home-detail.html', context=context)
+
+def correct_text(request, slug):
+  classified = get_object_or_404(Classified, slug=slug)
+  text=classified.text
+  corrections = correct_with_explanations(text)
+
+  classified.corrections=corrections
+  classified.save()
+  return redirect('explanations', classified.slug)
+  
+
+def explanations(request, slug):
+  classified = get_object_or_404(Classified, slug=slug)
+  
+  return render(request, "classifieds/explanations.html", {'classified':classified})

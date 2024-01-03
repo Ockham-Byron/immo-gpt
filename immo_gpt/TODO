@@ -1,3 +1,7 @@
+Général:
+login required
+
+
 Classified:
   ☐ home editable = False
   ☐ notification quand plus d'une semaine
@@ -6,6 +10,8 @@ Classified:
   ☐ aller sur la page des annonces
   ☐ supprimer une version
   ☐ donner des options de différence
+  formulaire avec edition enrichie
+  
   
 
 Home:
@@ -17,6 +23,8 @@ Style:
   ☐ add favorite style
   ☐ corriger grammaire et orthographe
   ☐ rendre traduisible les styles d'admin
+  ajouter message reussite ajout style
+  si le texte copie est trop court, mettre un message d'erreur
 
 Stripe:
   ☐ ajouter module de paiement

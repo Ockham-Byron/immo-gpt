@@ -19,4 +19,6 @@ class AddHomeForm(forms.ModelForm):
   class Meta:
     model = Home
     fields = ['name', 'price', 'surface']
+
+
                          

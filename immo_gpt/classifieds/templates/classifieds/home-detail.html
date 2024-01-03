@@ -92,13 +92,9 @@
 
 <div class="d-flex flex-row">
     <h4>{% trans 'Description' %}</h4>
-    <a href ="#" class="icon-button ms-2 text-center darkest-color">
-    <i class="fa-solid fa-pen-to-square"></i>
-    <p class="small">{% trans 'Edit' %}</p>
-    </a>
     <a href ="{% url 'description-update' home.slug%}" class="icon-button ms-2 text-center darkest-color">
     <i class="fa-regular fa-file-lines"></i>
-    <p class="small">{% trans 'Create' %}</p>
+    <p class="small">{% trans 'Add' %}</p>
     </a>
 </div>
 
@@ -129,16 +125,22 @@
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <p class="small">{% trans 'Edit' %}</p>
                                 </a>
+                                <a href ="{% url 'correct-text' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                    <p class="small">{% trans 'Correct' %}</p>
+                                </a>
                                 {% if last_classified.style %}
                                 <a href ="{% url 'description-update' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'New from this version' %}</p>
                                 </a>
+                                
                                 {% else %}
-                                <a href ="{% url 'define-style' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                <a href ="{% url 'define-style-from-classified' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'Analyse the style of this text' %}</p>
                                 </a>
+
                                 {% endif %}
                             </div>
                             <p>{{last_classified.updated_at|date:"d b Y"}}</p>
@@ -160,9 +162,14 @@
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'New from this version' %}</p>
                                 </a>
+                                <a href ="{% url 'correct-text' classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                    <p class="small">{% trans 'Correct' %}</p>
+                                </a>
                             </div>
                              <p>{{classified.updated_at|date:"d b Y"}}</p>
                             <p>{% trans "Style: "%} {{classified.style}}</p>
+
                             {{classified.text}}
                         </div>
                         {% endfor %}

@@ -252,3 +252,19 @@ a.btn:hover>div.label-container{
 .details-table td.home-info {
   min-width:130px !important;
 }
+
+/* Style Card */
+.style-card {
+  background-color: whitesmoke;
+  width:500px;
+  border-radius:10%;
+}
+
+.style-card p.title{
+  font-weight: bold;
+  font-size: 2em;
+}
+
+.style-card .actions a {
+  color:var(--dark-color);
+}

@@ -8,6 +8,14 @@ urlpatterns = [
   path(_('home-detail/<slug>'), home_detail, name='home-detail'),
   path(_('simple-update'), simple_update_classified_without_home, name='simple-update'),
   path(_('description-update/<slug>'), description_update, name='description-update'),
-  path(_('define-style/<slug>'), define_style, name='define-style'), 
+
+  #styles
+  path(_('styles'), styles, name='styles'),
+  path(_('add-style'), add_style, name='add-style'),
+  path(_('define-style'), define_style_from_text, name='define-style-from-text'), 
+  path(_('define-style/<slug>'), define_style_from_classified, name='define-style-from-classified'), 
     
+  #corrections
+  path(_('correct-text/<slug>'), correct_text, name="correct-text"),
+  path(_('corrections-explanations/<slug>'), explanations, name="explanations"),
 ] 

@@ -1,0 +1,14 @@
+{% extends "dashboard/base.html" %}
+{% load i18n%}
+
+{% block content %}
+<h1>{% trans 'Corrections' %}</h1>
+
+<p>Texte d'origine</p>
+<p>{{classified.text}}</p>
+
+<p>Corrections</p>
+
+<p>{{classified.corrections}}</p>
+
+{% endblock %}

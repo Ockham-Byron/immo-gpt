@@ -42,6 +42,17 @@
                   <li><a class="dropdown-item lightest-color" href="{% url 'simple-update' %}">{% trans 'Simple update' %}</a></li>
               </ul>
           </li>
+
+          <li class="dropdown">
+            <a href="#" class="nav-link dropdown-toggle px-sm-0 px-2 lightest-color" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-house"></i><span class="ms-1 d-none d-sm-inline">{% trans 'Styles' %}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
+              <li><a class="dropdown-item lightest-color" href="{% url 'styles' %}">{% trans 'All styles' %}</a></li>
+                <li><a class="dropdown-item lightest-color" href="{% url 'add-home' %}"><i class="fa-solid fa-plus pe-1"></i>{% trans 'Add Style' %}</a></li>
+                
+            </ul>
+        </li>
           
          
       </ul>
