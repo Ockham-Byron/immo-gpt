@@ -3,32 +3,41 @@ from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import AddHomeForm
+from .const import *
 from openai import OpenAI
 
 from .models import Home, Classified, Style
 
 client = OpenAI(api_key=os.environ.get("API_KEY"),)
 
-def correct_with_explanations(text):
-  response = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[
-    {
-      "role": "system",
-      "content": "You are a language teacher. You will be provided with a text in a certain language and your task is to correct it and to explain the errors. You will recognize the grammatical errors and the mispelling. For each one, you will describe the error and explain its correction. The language of your response is the same as the language of the text."
-    },
-    {
-      "role": "user",
-      "content": text
-    }
-    ],
-    temperature=0.7,
-    top_p=1
-    )
-  
-  return response.choices[0].message.content.replace('\n', '<br />')
-  
+def detect_language(formatted_prompt):
+      response=client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+          {"role": "user", "content":formatted_prompt},
+        ]
+      )
+      return response.choices[0].message.content
 
+def correct_with_explanations(formatted_prompt):
+  response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+          {"role": "user", "content":formatted_prompt},
+        ]
+      )
+      
+  return response.choices[0].message.content.strip()
+
+def openai_correct_text(formatted_prompt):
+  response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+          {"role": "user", "content":formatted_prompt},
+        ]
+      )
+      
+  return response.choices[0].message.content.strip()
 
 def define_style_from_reference(text):
   response = client.chat.completions.create(
@@ -242,12 +251,20 @@ def home_detail(request, slug):
 
   return render(request, 'classifieds/home-detail.html', context=context)
 
+@login_required
 def correct_text(request, slug):
   classified = get_object_or_404(Classified, slug=slug)
+  home=classified.home
   text=classified.text
-  corrections = correct_with_explanations(text)
-
+  formatted_prompt=LANGUAGE_PROMPT.format(text=text)
+  language=detect_language(formatted_prompt)
+  print(language)
+  formatted_prompt=CORRECTION_GENERATION_PROMPT.format(text=text, language=language)
+  corrections = correct_with_explanations(formatted_prompt)
   classified.corrections=corrections
+  formatted_prompt=CORRECT_TEXT_PROMPT.format(text=text)
+  corrected_text=openai_correct_text(formatted_prompt)
+  classified.text=corrected_text
   classified.save()
   return redirect('explanations', classified.slug)
   

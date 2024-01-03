@@ -18,3 +18,4 @@ class StyleAdmin(admin.ModelAdmin):
   list_display=( 'short_description', 'agent')
 
 admin.site.register(Style, StyleAdmin)
+

@@ -2,6 +2,7 @@
 {% load i18n%}
 
 {% block content %}
+{% include 'classifieds/loading.html' %}
 <h1>{% trans 'Corrections' %}</h1>
 
 <p>Texte d'origine</p>
@@ -9,6 +10,11 @@
 
 <p>Corrections</p>
 
-<p>{{classified.corrections}}</p>
+<div class="mt-2" style="white-space: pre-line;">{{classified.corrections}}</div>
 
+<h3>{% trans 'Corrected text' %}</h3>
+
+<div class="mt-2" style="white-space: pre-line;">{{classified.text}}</div>
+
+<a href="{% url 'home-detail' classified.home.slug%}">{% trans 'Back to ' %}{{classified.home.name}}</a>
 {% endblock %}
