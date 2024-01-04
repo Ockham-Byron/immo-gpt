@@ -11,7 +11,7 @@
 <h1 class="text-center">{% trans 'Homes' %}</h1>
 
 
-
+{% if homes%}
   {% for object in homes %}
   <div class="kcard mt-3 mx-2">
     <div class="top-section">
@@ -46,6 +46,10 @@
     </div>
   </div>
   {% endfor %}
+
+{% else %}
+<a href="{% url 'add-home' %}" class="btn btn-brand-color btn-mid">{% trans 'Add your first home'%}</a>
+{% endif %}
 
 
 

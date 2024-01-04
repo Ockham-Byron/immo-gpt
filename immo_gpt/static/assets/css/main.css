@@ -249,6 +249,10 @@ color:var(--light-color) !important;
 
 /* || Buttons */
 
+.btn-mid {
+  max-width:200px !important;
+}
+
 .btn-wide {
   width: 90%;
   padding:8px 20px;
@@ -256,6 +260,7 @@ color:var(--light-color) !important;
 
 .btn-brand-color {
   background-color: var(--brand-color);
+  color:whitesmoke
 }
 
 .btn-brand-color:hover {

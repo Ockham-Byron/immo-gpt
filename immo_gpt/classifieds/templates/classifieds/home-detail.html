@@ -98,7 +98,7 @@
     
     
     {% else %}
-    <a href ="{% url 'description-update' home.slug%}" class="icon-button ms-2 text-center darkest-color">
+    <a href ="{% url 'add-first-description' home.slug%}" class="icon-button ms-2 text-center darkest-color">
     <i class="fa-regular fa-file-lines"></i>
     <p class="small">{% trans 'Add' %}</p>
     {% endif %}
@@ -190,11 +190,11 @@
 
 
 <!-- Float button -->
-<a href="#" class="float btn" id="menu-share">
-<i class="fa fa-pen my-float"></i>
-<div class="label-container">
-<div class="label-text">{% trans 'Edit' %}</div>
-<i class="fa fa-play label-arrow"></i>
-</div>
+<a href="{% url 'update-home' home.slug %}" class="float btn">
+    <i class="fa fa-pen my-float"></i>
+    <div class="label-container">
+        <div class="label-text">{% trans 'Edit' %}</div>
+        
+    </div>
 </a>
 {% endblock %}

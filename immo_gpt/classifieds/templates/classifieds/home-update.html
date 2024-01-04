@@ -1,0 +1,41 @@
+{% extends 'dashboard/base.html'%}
+{% load i18n %}
+
+{% block title%}{% trans 'Update Home' %} {% endblock%}
+
+{% block content %}
+<!-- Form -->
+<div class="d-flex align-items-center justify-content-center vh-90">
+  <form class="kform" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <p class="title">{% trans 'Update ' %} {{home.name}}</p>
+      
+      {{form.name}}
+
+     <div class="d-flex mid-inputs justify-content-between">
+     <div class="d-flex flex-column">
+     <label>{% trans 'Surface' %}</label>
+      {{form.surface}} 
+      </div>
+      <div class="d-flex flex-column">
+      <label>{% trans 'Price' %}</label>
+      {{form.price}} 
+      </div>
+      </div>
+    
+       
+
+ 
+        
+      
+      <button class="submit" type="submit ">Submit</button>
+      <div class="text-center">
+        <a href="{% url 'home-detail' home.slug %}" class="mid-color">Cancel</a>
+      </div>
+  </form>
+</div>
+
+
+
+{% endblock %}

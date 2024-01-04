@@ -27,25 +27,25 @@
       <!-- User menu - End -->
       <ul class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start order-2 order-md-3" id="menu">
          
-          <li>
+        <li>
               <a href="{% url 'dashboard' %}" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2 lightest-color">
                   <i class="fa-solid fa-gauge"></i><span class="ms-1 d-none d-sm-inline">{% trans 'Dashboard' %}</span> </a>
-          </li>
+        </li>
 
-           <li class="dropdown">
+        <li class="dropdown">
               <a href="#" class="nav-link dropdown-toggle px-sm-0 px-2 lightest-color" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fa-solid fa-house"></i><span class="ms-1 d-none d-sm-inline">{% trans 'Classifieds' %}</span>
+                  <i class="fa-solid fa-house"></i><span class="ms-1 d-none d-sm-inline">{% trans 'Homes' %}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
                 <li><a class="dropdown-item lightest-color" href="{% url 'agent-homes' %}">{% trans 'All homes' %}</a></li>
                   <li><a class="dropdown-item lightest-color" href="{% url 'add-home' %}"><i class="fa-solid fa-plus pe-1"></i>{% trans 'Add Home' %}</a></li>
                   <li><a class="dropdown-item lightest-color" href="{% url 'simple-update' %}">{% trans 'Simple update' %}</a></li>
               </ul>
-          </li>
+        </li>
 
-          <li class="dropdown">
+        <li class="dropdown">
             <a href="#" class="nav-link dropdown-toggle px-sm-0 px-2 lightest-color" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-house"></i><span class="ms-1 d-none d-sm-inline">{% trans 'Styles' %}</span>
+                <i class="fa-solid fa-mortar-pestle"></i><span class="ms-1 d-none d-sm-inline">{% trans 'Styles' %}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
               <li><a class="dropdown-item lightest-color" href="{% url 'styles' %}">{% trans 'All styles' %}</a></li>

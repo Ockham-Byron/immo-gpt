@@ -2,7 +2,9 @@ import os
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import AddHomeForm
+from django.contrib import messages
+from django.utils.translation import gettext as _
+from .forms import AddHomeForm, AddFirstDescription
 from .const import *
 from openai import OpenAI
 
@@ -146,6 +148,7 @@ def define_style_from_classified(request, slug):
   classified.save()
   return render(request, "classifieds/all-styles.html")
 
+@login_required
 def simple_update_classified_without_home(request):
 
   if request.method == 'POST':
@@ -172,6 +175,23 @@ def simple_update_classified_without_home(request):
     
   return render(request, 'classifieds/simple-update.html')
 
+@login_required
+def add_first_description(request,slug):
+  home=get_object_or_404(Home, slug=slug)
+  if request.method == 'POST':
+    form=AddFirstDescription(request.POST)
+    if form.is_valid():
+      classified = form.save(commit=False)
+      classified.home=home
+      classified.save()
+      return redirect('home-detail', slug= home.slug)
+  else:
+    form=AddFirstDescription()
+
+  return render(request, 'classifieds/description-create-first.html', {'form':form, 'home':home})
+
+
+@login_required
 def description_update(request, slug):
   classified = Classified.objects.get(slug=slug)
   home = classified.home
@@ -196,6 +216,7 @@ def description_update(request, slug):
 
   return render(request, 'classifieds/description-update.html', context=context)
 
+@login_required
 def add_home(request):
   form = AddHomeForm()
 
@@ -211,8 +232,25 @@ def add_home(request):
       for error in list(form.errors.values()):
           print(request, error)
   
-  return render(request, 'classifieds/home-create.html', {'form': form})
+  return render(request, 'classifieds/home-update.html', {'form': form})
 
+@login_required
+def update_home(request, slug):
+  home = get_object_or_404(Home, slug=slug)
+  form = AddHomeForm(instance=home)
+
+  if request.method== 'POST':
+    form=AddHomeForm(request.POST, instance=home)
+    if form.is_valid():
+      form.save()
+      messages.success(request, _('The home has been successfully updated '))
+      return redirect(to='home-detail', slug=slug)
+    
+  return render(request, 'classifieds/home-update.html', {'form': form, 'home': home})
+    
+  
+
+@login_required
 def agent_homes(request):
   homes = Home.objects.filter(agent=request.user)
 
@@ -268,7 +306,7 @@ def correct_text(request, slug):
   classified.save()
   return redirect('explanations', classified.slug)
   
-
+@login_required
 def explanations(request, slug):
   classified = get_object_or_404(Classified, slug=slug)
   
