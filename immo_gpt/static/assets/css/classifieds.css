@@ -218,7 +218,7 @@ div.k-tab-pane {
 	border-radius:50px;
 	text-align:center;
 
-	z-index:1000;
+	z-index:700;
 	animation: bot-to-top 2s ease-out;
 }
 

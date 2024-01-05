@@ -128,7 +128,7 @@
                         <div class="k-tab-pane tab-pane fade active show shadow" id="description-version{{last_classified.version}}" role="tabpanel">
                             <div class="d-flex flex-row">
                                 <h4 class="dark-color">{% trans 'Version' %} {{last_classified.version}}</h4>
-                                <a href ="#" class="icon-button ms-2 text-center darkest-color trigger-loader">
+                                <a href ="{% url 'edit-description' last_classified.slug %}" class="icon-button ms-2 text-center darkest-color">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <p class="small">{% trans 'Edit' %}</p>
                                 </a>
@@ -137,13 +137,13 @@
                                     <p class="small">{% trans 'Correct' %}</p>
                                 </a>
                                 {% if last_classified.style %}
-                                <a href ="{% url 'description-update' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                <a href ="{% url 'description-update' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'New from this version' %}</p>
                                 </a>
                                 
                                 {% else %}
-                                <a href ="{% url 'define-style-from-classified' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                <a href ="{% url 'define-style-from-classified' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'Analyse the style of this text' %}</p>
                                 </a>
@@ -154,18 +154,19 @@
                             {% if last_classified.style %}
                             <p>{% trans "Style: "%} {{last_classified.style}}</p>
                             {% endif %}
-                            {{last_classified.text}}
+                            {{last_classified.text|safe}}
+                            
                         </div>
                         {% if classifieds %}
                         {% for classified in classifieds %}
                         <div class="k-tab-pane tab-pane fade shadow " id="description-version{{classified.version}}" role="tabpanel">
                             <div class="d-flex flex-row">
                                 <h4 class="dark-color">{% trans 'Version' %} {{classified.version}}</h4>
-                                <a href ="#" class="icon-button ms-2 text-center darkest-color trigger-loader">
+                                <a href ="{% url 'edit-description' classified.slug %}" class="icon-button ms-2 text-center darkest-color">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <p class="small">{% trans 'Edit' %}</p>
                                 </a>
-                                <a href ="{% url 'description-update' classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                <a href ="{% url 'description-update' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'New from this version' %}</p>
                                 </a>

@@ -14,33 +14,35 @@
 {% if homes%}
   {% for object in homes %}
   <div class="kcard mt-3 mx-2">
+    <a href="{% url 'home-detail' object.slug %}">
     <div class="top-section">
       <div class="border"></div>
       <div class="icons">
       <div class="logo"></div>
         <div class="social-media">
-        <a href="{% url 'home-detail' object.slug %}">
+        
         <svg xmlns="http://www.w3.org/2000/svg" width="10.605" height="15.555"><path d="m2.828 15.555 7.777-7.779L2.828 0 0 2.828l4.949 4.948L0 12.727l2.828 2.828z"/></svg>
         </svg>
-        </a>
+        
       </div>
       </div>
-      <h6 class="text-center my-auto">{{object.name}}</h6>
+      <h6 class="text-center my-auto dark-color">{{object.name}}</h6>
     </div>
+    </a>
     <div class="bottom-section">
-      <span class="title">UNIVERSE OF UI</span>
+      {% comment %} <span class="title">UNIVERSE OF UI</span> {% endcomment %}
       <div class="row row1">
         <div class="item">
-          <span class="big-text">2626</span>
-          <span class="regular-text">UI elements</span>
+          <span class="big-text">{{object.surface}}</span>
+          <span class="regular-text">m2</span>
         </div>
         <div class="item">
-          <span class="big-text">100%</span>
-          <span class="regular-text">Free for use</span>
+          <span class="big-text">{{object.price}}</span>
+          <span class="regular-text">€</span>
         </div>
         <div class="item">
-          <span class="big-text">38,631</span>
-          <span class="regular-text">Contributers</span>
+          <span class="big-text">0</span>
+          <span class="regular-text">{% trans 'Visits' %}</span>
         </div>
       </div>
     </div>

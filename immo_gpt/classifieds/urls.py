@@ -12,6 +12,8 @@ urlpatterns = [
 
   #descriptions
   path(_('add-first-description/<slug>'), add_first_description, name='add-first-description'),
+  path(_('edit-description/<slug>'), description_edit, name='edit-description'),
+  path(_('delete-description/<slug>'), description_delete, name='delete-description'),
 
   #styles
   path(_('styles'), styles, name='styles'),

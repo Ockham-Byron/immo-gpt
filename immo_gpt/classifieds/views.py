@@ -139,14 +139,13 @@ def define_style_from_text(request):
 @login_required
 def define_style_from_classified(request, slug):
   classified = get_object_or_404(Classified, slug=slug)
-
   long_description = define_style_from_reference(classified.text)
   short_description = give_style_short_description(long_description)
   style = Style(agent=request.user, short_description = short_description, long_description=long_description)
   style.save()
   classified.style = style
   classified.save()
-  return render(request, "classifieds/all-styles.html")
+  return redirect('styles')
 
 @login_required
 def simple_update_classified_without_home(request):
@@ -188,7 +187,7 @@ def add_first_description(request,slug):
   else:
     form=AddFirstDescription()
 
-  return render(request, 'classifieds/description-create-first.html', {'form':form, 'home':home})
+  return render(request, 'classifieds/description-create-edit.html', {'form':form, 'home':home})
 
 
 @login_required
@@ -217,6 +216,30 @@ def description_update(request, slug):
   return render(request, 'classifieds/description-update.html', context=context)
 
 @login_required
+def description_edit(request, slug):
+  classified = get_object_or_404(Classified, slug=slug)
+  home = classified.home
+
+  if request.method == 'POST':
+    form = AddFirstDescription(request.POST, instance=classified)
+    if form.is_valid():
+      form.save()
+      return redirect('home-detail', slug=home.slug)
+  
+  else:
+    form = AddFirstDescription( instance=classified)
+
+  return render(request, 'classifieds/description-create-edit.html', {'form':form, 'home':home, 'classified':classified})
+
+
+@login_required
+def description_delete(request, slug):
+  classified = get_object_or_404(Classified, slug=slug)
+  home=classified.home
+  classified.delete()
+  return redirect('home-detail', slug=home.slug)
+
+@login_required
 def add_home(request):
   form = AddHomeForm()
 
@@ -227,12 +250,12 @@ def add_home(request):
       home = form.save(commit=False)
       home.agent = request.user
       home.save()
-      return redirect('home-detail', slug=home.slug)
+      return redirect('add-first-description', slug=home.slug)
   else:
       for error in list(form.errors.values()):
           print(request, error)
   
-  return render(request, 'classifieds/home-update.html', {'form': form})
+  return render(request, 'classifieds/home-create.html', {'form': form})
 
 @login_required
 def update_home(request, slug):

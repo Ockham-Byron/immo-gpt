@@ -1,9 +1,12 @@
 {% load i18n static avatar %}
 <div id="sidebar" class="col-12 col-sm-3 col-xl-2 px-sm-2 px-0 bg-dark d-flex sticky-top">
   <div  class="d-flex flex-sm-column flex-row flex-grow-1 align-items-center align-items-sm-start px-3 py-2 text-white order-1">
+    <div class="d-flex align-items-center">
       <a href="/" class="d-flex align-items-center pb-sm-3 mb-md-0 me-md-auto text-white text-decoration-none">
           <img id="sidebar-logo" src="{% static 'assets/img/logo.png' %}" />
       </a>
+      <p class="site-title ms-2">PropertyPad</p>
+    </div>
       <!-- User menu - Start -->
       <div class="dropdown py-sm-4  ms-auto ms-sm-0 flex-shrink-1 order-3 order-md-2">
           <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -26,6 +29,8 @@
       </div>
       <!-- User menu - End -->
       <ul class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start order-2 order-md-3" id="menu">
+
+        {% include 'users/includes/langswitch.html' %}
          
         <li>
               <a href="{% url 'dashboard' %}" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2 lightest-color">

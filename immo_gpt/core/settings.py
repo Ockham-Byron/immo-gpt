@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'dashboard',
     'pages',
     'classifieds',
+
+    #tiers_apps
+    'tinymce',
     
 ]
 
@@ -177,5 +180,7 @@ LOGIN_REDIRECT_URL = '/'
 
 #duration of the cookies to remember the user credentials
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
+
+
 
 

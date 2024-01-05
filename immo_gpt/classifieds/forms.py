@@ -1,4 +1,5 @@
 from django import forms
+from tinymce.widgets import TinyMCE
 from django.utils.translation import gettext as _
 from .models import Home, Classified
 
@@ -21,11 +22,12 @@ class AddHomeForm(forms.ModelForm):
     fields = ['name', 'price', 'surface']
 
 class AddFirstDescription(forms.ModelForm):
-  text= forms.CharField(widget=forms.Textarea(attrs={"cols":"40", "rows":"5"}))
+  
 
   class Meta:
     model = Classified
     fields = ['text']
+    widgets = {'text': TinyMCE(attrs={'cols': 80, 'rows': 30})}
 
 
                          

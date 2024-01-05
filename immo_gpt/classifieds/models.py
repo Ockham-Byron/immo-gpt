@@ -1,4 +1,5 @@
 from uuid import uuid4
+from tinymce.models import HTMLField
 from django.utils.translation import gettext as _
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify

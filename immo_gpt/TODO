@@ -1,16 +1,18 @@
 Général:
-login required
+☐ login required
 
-
+Compte-rendu:
+  ☐ ajouter logique
+  
 Classified:
   ☐ home editable = False
   ☐ notification quand plus d'une semaine
-  ☐ widget attente
+  ✔ widget attente @done(24-01-05 08:03)
   ☐ message réussite
-  ☐ aller sur la page des annonces
-  ☐ supprimer une version
+  ✔ aller sur la page des annonces @done(24-01-05 08:03)
+  ✔ supprimer une version @done(24-01-05 08:03)
   ☐ donner des options de différence
-  formulaire avec edition enrichie
+  ✔ formulaire avec edition enrichie @done(24-01-05 08:03)
   
   
 
@@ -21,7 +23,7 @@ Home:
 
 Style:
   ☐ add favorite style
-  ☐ corriger grammaire et orthographe
+  ✔ corriger grammaire et orthographe @done(24-01-05 08:04)
   ☐ rendre traduisible les styles d'admin
   ajouter message reussite ajout style
   si le texte copie est trop court, mettre un message d'erreur
