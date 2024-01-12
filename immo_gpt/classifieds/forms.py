@@ -1,7 +1,8 @@
 from django import forms
 from tinymce.widgets import TinyMCE
 from django.utils.translation import gettext as _
-from .models import Home, Classified, Style
+from bootstrap_datepicker_plus.widgets import DatePickerInput
+from .models import Home, Classified, Style, Visit
 
 class AddHomeForm(forms.ModelForm): 
   name = forms.CharField(widget=forms.TextInput(attrs={
@@ -50,6 +51,16 @@ class AddEditStyle(forms.ModelForm):
 class DefineStyleFromText(forms.Form):
     text= forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
 
+class AddVisit(forms.ModelForm):
+  class Meta:
+    model = Visit
 
-
+    fields = ['text', 'visit_date']
+    widgets = {
+      'text': TinyMCE(attrs={'cols': 80, 'rows': 30}),
+      'visit_date': DatePickerInput(options={
+        "format": "DD/MM/YYYY",
+        "showTodayButton": True,
+        })
+    }
                          

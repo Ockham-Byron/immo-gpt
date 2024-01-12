@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 
     #tiers_apps
     'tinymce',
+    "bootstrap_datepicker_plus",
     
 ]
 

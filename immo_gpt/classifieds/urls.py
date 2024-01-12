@@ -24,8 +24,13 @@ urlpatterns = [
   path(_('define-style/<slug>'), define_style_from_classified, name='define-style-from-classified'), 
   path(_('edit-style/<id>'), edit_style, name='edit-style'),
   path(_('delete-style/<id>'), delete_style, name='delete-style'),
+
+  #visits
+  path(_('add-visit/<slug>'), add_visit, name='add-visit'),
     
   #corrections
   path(_('correct-text/<slug>'), correct_text, name="correct-text"),
   path(_('corrections-explanations/<slug>'), explanations, name="explanations"),
+
+
 ] 

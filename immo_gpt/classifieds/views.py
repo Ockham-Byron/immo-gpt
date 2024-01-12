@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.utils.text import slugify
-from .forms import AddHomeForm, AddFirstDescription, AddEditStyle, DefineStyleFromText
+from .forms import *
 from .const import *
 from openai import OpenAI
 
@@ -61,7 +61,7 @@ def define_style_from_reference(text):
     messages=[
     {
       "role": "system",
-      "content": "You will be provided with a text and your task is to describe its style. Step1: You will recognize the language of the text provided. Step2: You will give a precise description of the style. The description will be in the language recognized in step1 and of maximum 150 words. This style could be reused to write another text so the description of the style has to be general, with no details of the content."
+      "content": "You will be provided with a text and your task is to describe its style. Your response will be in the same language as the text provided and of maximum 150 words. You will give a precise analyze of the style without references to the content's details. This style will be reused to write another text on another subject."
     },
     {
       "role": "user",
@@ -218,6 +218,8 @@ def delete_style(request, id):
   style.delete()
   return redirect('styles')
 
+
+#descriptions
 @login_required
 def simple_update_classified_without_home(request):
 
@@ -244,6 +246,8 @@ def simple_update_classified_without_home(request):
 
     
   return render(request, 'classifieds/simple-update.html')
+
+
 
 @login_required
 def add_first_description(request,slug):
@@ -310,6 +314,8 @@ def description_delete(request, slug):
   classified.delete()
   return redirect('home-detail', slug=home.slug)
 
+
+#homes
 @login_required
 def add_home(request):
   form = AddHomeForm()
@@ -391,6 +397,7 @@ def home_detail(request, slug):
 
   return render(request, 'classifieds/home-detail.html', context=context)
 
+
 @login_required
 def correct_text(request, slug):
   classified = get_object_or_404(Classified, slug=slug)
@@ -418,3 +425,21 @@ def explanations(request, slug):
   classified = get_object_or_404(Classified, slug=slug)
   
   return render(request, "classifieds/explanations.html", {'classified':classified})
+
+#Visits
+@login_required
+def add_visit(request, slug):
+  home = get_object_or_404(Home, slug=slug)
+  form = AddVisit()
+  if request.method == "POST":
+    form = AddVisit(request.POST)
+    if form.is_valid():
+      visit=form.save(commit=False)
+      visit.agent=request.user
+      visit.home=home
+      visit.save()
+      return redirect('home-detail', home.slug)
+    
+  return render(request, "classifieds/visit-create-edit.html", {'form': form, 'home':home})
+    
+  

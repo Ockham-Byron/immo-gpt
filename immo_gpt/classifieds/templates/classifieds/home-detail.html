@@ -91,7 +91,7 @@
 </table>
 </div> {% endcomment %}
 
-
+<!-- Descriptions Start -->
 <div class="d-flex flex-row">
     <h4>{% trans 'Description' %}</h4>
     {% if last_classified %}
@@ -193,14 +193,25 @@
                                     <p class="small">{% trans 'Correct' %}</p>
                                 </a>
                                 {% endif %}
-                                <a href ="{% url 'description-update' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                {% if classified.style %}
+                                <a href ="{% url 'description-update' classified.slug%}" class="icon-button ms-2 text-center mid-color">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'New from this version' %}</p>
                                 </a>
                                 
+                                {% else %}
+                                <a href ="{% url 'define-style-from-classified' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p class="small">{% trans 'Analyse the style of this text' %}</p>
+                                </a>
+
+                                {% endif %}
+                                
                             </div>
                              <p>{{classified.updated_at|date:"d b Y"}}</p>
-                            <p>{% trans "Style: "%} {{classified.style}}</p>
+                            {% if classified.style %}
+                                <p>{% trans "Style: "%} {{classified.style}}</p>
+                            {% endif %}
                             <div id="{{classified.version}}" style="white-space: pre-line;">
                             {{classified.text|safe}}
                             </div>
@@ -219,7 +230,145 @@
     </div>
 {% endif %}
 {% endif %}
+<!-- Descriptions End -->
 
+<!-- Visits Start -->
+<div class="d-flex flex-row">
+    <h4>{% trans 'Visits' %}</h4>
+    
+    <a href ="{% url 'add-visit' home.slug%}" class="icon-button ms-2 text-center darkest-color">
+    <i class="fa-regular fa-file-lines"></i>
+    <p class="small">{% trans 'Add Visit' %}</p>
+    
+    </a>
+</div>
+
+{% if last_classified %}
+    <div class="mt-5">
+        <div role="tabpanel">
+            <div class="row">
+                <div class="col-md-3 col-12">
+                    <div class="list-group" id="myList" role="tablist">
+                        <a class="k-list-group-item list-group-item list-group-item-action active mb-3 p-3 shadow  "
+                            data-bs-toggle="list" href="#description-version{{last_classified.version}}" role="tab">{% trans 'Version' %} {{last_classified.version}}
+                        </a>
+                        {% for classified in classifieds%}
+                        <a class="k-list-group-item list-group-item list-group-item-action mb-3 p-3 shadow" 
+                            data-bs-toggle="list" href="#description-version{{classified.version}}" role="tab">
+                            {% trans 'Version' %} {{classified.version}}
+                        </a>
+                        {% endfor %}
+                        
+                    </div>
+                </div>
+                <div class="col-md-9 col-12">
+                    <div class="tab-content">
+                        <div class="k-tab-pane tab-pane fade active show shadow" id="description-version{{last_classified.version}}" role="tabpanel">
+                            <div class="d-flex flex-row">
+                                <h4 class="dark-color">{% trans 'Version' %} {{last_classified.version}}</h4>
+                                <a href ="{% url 'edit-description' last_classified.slug %}" class="icon-button ms-2 text-center darkest-color">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    <p class="small">{% trans 'Edit' %}</p>
+                                </a>
+                                {% if last_classified.is_ai_generated == False %}
+                                    {% if last_classified.corrections %}
+                                    <a href ="{% url 'explanations' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                        <i class="fa-solid fa-chalkboard-user"></i>
+                                        <p class="small">{% trans 'View corrections' %}</p>
+                                    </a>
+                                    {% else %}
+                                    <a href ="{% url 'correct-text' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                        <i class="fa-solid fa-chalkboard-user"></i>
+                                        <p class="small">{% trans 'Correct' %}</p>
+                                    </a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if last_classified.style %}
+                                <a href ="{% url 'description-update' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p class="small">{% trans 'New from this version' %}</p>
+                                </a>
+                                
+                                {% else %}
+                                <a href ="{% url 'define-style-from-classified' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p class="small">{% trans 'Analyse the style of this text' %}</p>
+                                </a>
+
+                                {% endif %}
+                            </div>
+                            <p>{{last_classified.updated_at|date:"d b Y"}}</p>
+                            {% if last_classified.style %}
+                            <p>{% trans "Style: "%} {{last_classified.style}}</p>
+                            {% endif %}
+                            <div id="{{last_classified.version}}" style="white-space: pre-line;">
+                                {{last_classified.text|safe}}
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <a href ="#" onclick="copyToClipboard({{last_classified.version}})" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-regular fa-copy"></i>
+                                    <p class="small">{% trans 'Copy' %}</p>
+                                </a>
+                            </div>
+                        </div>
+                        {% if classifieds %}
+                        {% for classified in classifieds %}
+                        <div class="k-tab-pane tab-pane fade shadow " id="description-version{{classified.version}}" role="tabpanel">
+                            <div class="d-flex flex-row">
+                                <h4 class="dark-color">{% trans 'Version' %} {{classified.version}}</h4>
+                                <a href ="{% url 'edit-description' classified.slug %}" class="icon-button ms-2 text-center darkest-color">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    <p class="small">{% trans 'Edit' %}</p>
+                                </a>
+                                {% if classified.corrections %}
+                                <a href ="{% url 'explanations' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                    <p class="small">{% trans 'View corrections' %}</p>
+                                </a>
+                                {% else %}
+                                <a href ="{% url 'correct-text' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                    <p class="small">{% trans 'Correct' %}</p>
+                                </a>
+                                {% endif %}
+                                {% if classified.style %}
+                                <a href ="{% url 'description-update' classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p class="small">{% trans 'New from this version' %}</p>
+                                </a>
+                                
+                                {% else %}
+                                <a href ="{% url 'define-style-from-classified' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p class="small">{% trans 'Analyse the style of this text' %}</p>
+                                </a>
+
+                                {% endif %}
+                                
+                            </div>
+                             <p>{{classified.updated_at|date:"d b Y"}}</p>
+                            {% if classified.style %}
+                                <p>{% trans "Style: "%} {{classified.style}}</p>
+                            {% endif %}
+                            <div id="{{classified.version}}" style="white-space: pre-line;">
+                            {{classified.text|safe}}
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <a href ="#" onclick="copyToClipboard({{classified.version}})" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-regular fa-copy"></i>
+                                    <p class="small">{% trans 'Copy' %}</p>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endif %}
+<!-- Visits End -->
 
 <!-- Float button -->
 <a href="{% url 'update-home' home.slug %}" class="float btn">

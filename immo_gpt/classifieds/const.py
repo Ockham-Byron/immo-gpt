@@ -20,3 +20,4 @@ SEARCH_STYLE_PROMPT = """
 You will be provided with a {text} and a list of {styles}. You'll analyse the style of the text. If it corresponds to a style from the list of styles, you'll return the style's short description. If the style of the text does not correspond to a style from the list of styles, you'll return 'False'. 
 
 """
+

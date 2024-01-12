@@ -82,7 +82,7 @@ class Style(models.Model):
 class Classified(models.Model):
   id = models.UUIDField(default = uuid4, editable = False, primary_key=True)
   home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name="classified", null=True, blank=True)
-  style = models.ForeignKey(Style, on_delete=models.PROTECT, null=True, blank=True )
+  style = models.ForeignKey(Style, on_delete=models.SET_NULL, null=True, blank=True )
   text = models.TextField(blank=False, null=False)
   corrections = models.TextField(blank=True, null=True)
   created_at = models.DateTimeField(auto_now_add=True)
@@ -111,7 +111,7 @@ class PieceOfHouse(models.Model):
 class Visit(models.Model):
   id = models.UUIDField(default = uuid4, editable = False, primary_key=True)
   home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name="visits", null=True, blank=True)
-  style = models.ForeignKey(Style, on_delete=models.PROTECT, null=True, blank=True )
+  style = models.ForeignKey(Style, on_delete=models.SET_NULL, null=True, blank=True )
   text = models.TextField(blank=False, null=False)
   corrections = models.TextField(blank=True, null=True)
   visit_date = models.DateField(blank=True, null=True, default=now)
@@ -122,7 +122,7 @@ class Visit(models.Model):
   slug = models.SlugField(max_length=255, unique= True, default=None, null=True)
 
   def __str__(self):
-     return self.home.name
+     return self.home.name + '-visit' + self.visit_date 
   
   def save(self, *args, **kwargs):
         super().save()

@@ -1,0 +1,65 @@
+{% extends 'dashboard/base.html'%}
+{% load i18n static %}
+
+{% block title%}{% trans 'Add Visit' %} {% endblock%}
+
+{% block content %}
+<!-- Form -->
+
+<div class="d-flex align-items-center justify-content-center vh-90">
+  <form class="kform kform-large" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {% if visit %}
+    <p class="title">{% trans 'Edit' %} {{style.short_description}}</p>
+    {% else %}
+    <p class="title">{% trans 'Add a visit to ' %}{{home.name}}</p>
+    {% endif %}
+    <p>{% trans 'Report of the visit' %}</p>
+    {{form.text}}
+    <div class="kdatepicker" style="width:300px;">
+    <p>{% trans 'Date of the visit' %}</p>
+  {{ form.visit_date }}
+  </div>
+
+
+ 
+        
+      
+      <button class="submit" type="submit ">{% trans 'Submit' %}</button>
+      <div class="text-center">
+        <a href="{% url 'styles' %}" class="mid-color">{% trans 'Cancel' %}</a>
+      </div>
+      {% if visit %}
+      <div class="text-center">
+        <a href="#" type="button" class="dark-color" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fa fa-trash" aria-hidden="true"></i> {% trans 'Delete this style forever' %}</a>
+      </div>
+      {% endif %}
+  </form>
+</div>
+
+<!-- Modal delete Description-->
+{% if own_style %}
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content pt-2 pb-3">
+      <div class="text-center">
+        <img src="{% static 'assets/img/icons/warning-100.png' %}" alt="error icon" />
+        <br/>
+        <h5 class="modal-title mid-color" id="exampleModalLabel">{% trans 'Delete this style ?' %}</h5>
+      </div>
+      <div class="text-center">
+        <p class="darkest-color p-4">{% trans "This action is definitive but sometimes you have to make choices..." %}</p>
+      </div>
+      <div class="d-flex justify-content-evenly pb-2">
+        <a href="{% url 'delete-style' style.id %}"  class="btn btn-mid-color btn-modal" >{% trans "Yes, no regret" %}</a>
+        <a type="button" class="btn btn-outlined btn-modal outline-mid-color" data-bs-dismiss="modal">{% trans 'Cancel' %}</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+
+
+{% endblock %}

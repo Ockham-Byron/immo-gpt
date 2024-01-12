@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Classified, Home, Style
+from .models import Classified, Home, Style, Visit
 
 # Register your models here.
 class ClassifiedAdmin(admin.ModelAdmin):
@@ -18,4 +18,6 @@ class StyleAdmin(admin.ModelAdmin):
   list_display=( 'short_description', 'agent')
 
 admin.site.register(Style, StyleAdmin)
+
+admin.site.register(Visit)
 
