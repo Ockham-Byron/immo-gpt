@@ -8,7 +8,8 @@ urlpatterns = [
   path(_('agent-homes'), agent_homes, name='agent-homes'),
   path(_('home-detail/<slug>'), home_detail, name='home-detail'),
   path(_('simple-update'), simple_update_classified_without_home, name='simple-update'),
-  path(_('description-update/<slug>'), description_update, name='description-update'),
+  path(_('delete-home/<slug>'), delete_home, name='delete-home'),
+  path(_('description-update/<slug>'), description_update_with_openai, name='description-update'),
 
   #descriptions
   path(_('add-first-description/<slug>'), add_first_description, name='add-first-description'),
@@ -20,6 +21,8 @@ urlpatterns = [
   path(_('add-style'), add_style, name='add-style'),
   path(_('define-style'), define_style_from_text, name='define-style-from-text'), 
   path(_('define-style/<slug>'), define_style_from_classified, name='define-style-from-classified'), 
+  path(_('edit-style/<id>'), edit_style, name='edit-style'),
+  path(_('delete-style/<id>'), delete_style, name='delete-style'),
     
   #corrections
   path(_('correct-text/<slug>'), correct_text, name="correct-text"),

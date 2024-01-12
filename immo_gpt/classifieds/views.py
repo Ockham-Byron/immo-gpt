@@ -4,13 +4,18 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.translation import gettext as _
-from .forms import AddHomeForm, AddFirstDescription
+from django.utils.text import slugify
+from .forms import AddHomeForm, AddFirstDescription, AddEditStyle
 from .const import *
 from openai import OpenAI
 
 from .models import Home, Classified, Style
 
 client = OpenAI(api_key=os.environ.get("API_KEY"),)
+
+def decode_utf8(text):
+    bytes_text = text.encode('latin1')  # Convert to bytes using latin1 encoding
+    return bytes_text.decode('utf8')
 
 def detect_language(formatted_prompt):
       response=client.chat.completions.create(
@@ -40,6 +45,15 @@ def openai_correct_text(formatted_prompt):
       )
       
   return response.choices[0].message.content.strip()
+
+def detect_style(formatted_prompt):
+      response=client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+          {"role": "user", "content":formatted_prompt},
+        ]
+      )
+      return response.choices[0].message.content
 
 def define_style_from_reference(text):
   response = client.chat.completions.create(
@@ -139,12 +153,56 @@ def define_style_from_text(request):
 @login_required
 def define_style_from_classified(request, slug):
   classified = get_object_or_404(Classified, slug=slug)
+  styles = Style.objects.filter(agent = None) | Style.objects.filter(agent=request.user)
   long_description = define_style_from_reference(classified.text)
   short_description = give_style_short_description(long_description)
-  style = Style(agent=request.user, short_description = short_description, long_description=long_description)
-  style.save()
-  classified.style = style
-  classified.save()
+  if styles.filter(short_description=short_description).exists():
+    style = Style.objects.get(short_description=short_description)
+    classified.style = style
+    classified.save()
+    return redirect('home-detail', classified.home.slug)
+  else:
+    style = Style(agent=request.user, short_description = short_description, long_description=long_description)
+    style.save()
+    classified.style = style
+    classified.save()
+    return redirect('styles')
+  
+  
+@login_required
+def edit_style(request, id):
+  style = get_object_or_404(Style, id=id)
+  if style.agent == request.user:
+    own_style = True
+  else:
+    own_style = False
+  if request.method == 'POST':
+    form = AddEditStyle(request.POST, instance=style)
+    if form.is_valid():
+      if own_style:
+        style=form.save()
+        
+      else:
+        new_style = form.save(commit=False)
+        new_style.agent=request.user
+        new_style.save()
+      return redirect('styles')
+  else:
+    form = AddEditStyle(instance=style)
+
+  context = {
+    'style':style,
+    'own_style':own_style,
+    'form':form
+  }
+
+  return render(request, 'classifieds/style-create-edit.html',context=context)
+
+
+@login_required
+def delete_style(request, id):
+  style=get_object_or_404(Style, id=id)
+  style.delete()
   return redirect('styles')
 
 @login_required
@@ -191,7 +249,7 @@ def add_first_description(request,slug):
 
 
 @login_required
-def description_update(request, slug):
+def description_update_with_openai(request, slug):
   classified = Classified.objects.get(slug=slug)
   home = classified.home
   classifieds = Classified.objects.filter(home=home)
@@ -205,7 +263,7 @@ def description_update(request, slug):
     style=Style.objects.get(pk=style_input)
     description = classified.text
     text = create_description_update_classified(style.long_description, description)
-    new_classified = Classified(text=text, home=classified.home, style=style, version=new_version)
+    new_classified = Classified(text=text, home=classified.home, style=style, version=new_version, is_ai_generated=True)
     new_classified.save()  
     return redirect('home-detail', slug=home.slug)
 
@@ -265,13 +323,21 @@ def update_home(request, slug):
   if request.method== 'POST':
     form=AddHomeForm(request.POST, instance=home)
     if form.is_valid():
-      form.save()
+      home=form.save(commit=False)
+      new_slug = slugify(home.name + '_' + str(home.id))
+      home.slug = new_slug
+      home.save()
       messages.success(request, _('The home has been successfully updated '))
-      return redirect(to='home-detail', slug=slug)
+      return redirect(to='home-detail', slug=new_slug)
     
   return render(request, 'classifieds/home-update.html', {'form': form, 'home': home})
     
-  
+@login_required
+def delete_home(request, slug):
+  home = get_object_or_404(Home, slug=slug)
+  home.delete()
+  return redirect('agent-homes', )
+
 
 @login_required
 def agent_homes(request):
@@ -315,19 +381,24 @@ def home_detail(request, slug):
 @login_required
 def correct_text(request, slug):
   classified = get_object_or_404(Classified, slug=slug)
-  home=classified.home
   text=classified.text
-  formatted_prompt=LANGUAGE_PROMPT.format(text=text)
-  language=detect_language(formatted_prompt)
-  print(language)
-  formatted_prompt=CORRECTION_GENERATION_PROMPT.format(text=text, language=language)
-  corrections = correct_with_explanations(formatted_prompt)
-  classified.corrections=corrections
-  formatted_prompt=CORRECT_TEXT_PROMPT.format(text=text)
+  formatted_prompt1=LANGUAGE_PROMPT.format(text=text)
+  language=detect_language(formatted_prompt1)
+  # formatted_prompt2=CORRECTION_GENERATION_PROMPT.format(text=text1, language=language)
+  # corrections = correct_with_explanations(formatted_prompt2)
+  # classified.corrections=corrections
+  formatted_prompt=CORRECT_TEXT_PROMPT.format(text=text, language=language)
   corrected_text=openai_correct_text(formatted_prompt)
   classified.text=corrected_text
   classified.save()
-  return redirect('explanations', classified.slug)
+  context = {
+    
+    'classified':classified
+  }
+
+  return render(request, "classifieds/explanations.html", context=context)
+  
+  
   
 @login_required
 def explanations(request, slug):

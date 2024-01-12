@@ -1,15 +1,17 @@
 {% extends 'dashboard/base.html'%}
 {% load i18n %}
 
-{% block title%}{% trans 'Simple update' %} {% endblock%}
+{% block title%}{% trans 'New version' %} {% endblock%}
 
 {% block content %}
+
+{% include 'classifieds/loading.html' %}
 <!-- Form -->
 <div class="d-flex align-items-center justify-content-center vh-90">
   <form class="kform" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     
-    <p class="title">{% trans 'Simple update' %}</p>
+    <p class="title">{% trans 'New version' %}</p>
 
       <select class="form-select" name="style">
         <option selected value="{{classified.style.pk}}">{% trans "Same style" %} ({{classified.style}})</option>
@@ -23,9 +25,9 @@
  
         
       
-      <button class="submit" type="submit ">Submit</button>
+      <button class="submit trigger-loader" type="submit" >{% trans 'Submit' %}</button>
       <div class="text-center">
-        <a href="/en/dashboard/" class="mid-color">Cancel</a>
+        <a href="/en/dashboard/" class="mid-color">{% trans 'Cancel' %}</a>
       </div>
   </form>
 </div>

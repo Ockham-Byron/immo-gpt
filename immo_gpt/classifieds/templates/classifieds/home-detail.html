@@ -1,6 +1,6 @@
 {% extends "dashboard/base.html" %}
 
-{% load i18n %}
+{% load i18n intspace %}
 
 {% block title%} {% endblock%}
 
@@ -12,7 +12,7 @@
     <h1 class="text-center">{{home.name}}</h1>
     <div class="d-flex justify-content-center">
         <p class = "home-tag mx-2">{{home.surface}} m2 </p>
-        <p class = "home-tag mx-2">{{home.price}} € </p>
+        <p class = "home-tag mx-2">{{home.price|intspace}} € </p>
     </div>
 </div>
 
@@ -132,12 +132,21 @@
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <p class="small">{% trans 'Edit' %}</p>
                                 </a>
-                                <a href ="{% url 'correct-text' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
-                                    <i class="fa-solid fa-chalkboard-user"></i>
-                                    <p class="small">{% trans 'Correct' %}</p>
-                                </a>
+                                {% if last_classified.is_ai_generated == False %}
+                                    {% if last_classified.corrections %}
+                                    <a href ="{% url 'explanations' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                        <i class="fa-solid fa-chalkboard-user"></i>
+                                        <p class="small">{% trans 'View corrections' %}</p>
+                                    </a>
+                                    {% else %}
+                                    <a href ="{% url 'correct-text' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                        <i class="fa-solid fa-chalkboard-user"></i>
+                                        <p class="small">{% trans 'Correct' %}</p>
+                                    </a>
+                                    {% endif %}
+                                {% endif %}
                                 {% if last_classified.style %}
-                                <a href ="{% url 'description-update' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                <a href ="{% url 'description-update' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'New from this version' %}</p>
                                 </a>
@@ -154,8 +163,15 @@
                             {% if last_classified.style %}
                             <p>{% trans "Style: "%} {{last_classified.style}}</p>
                             {% endif %}
-                            {{last_classified.text|safe}}
-                            
+                            <div id="{{last_classified.version}}" style="white-space: pre-line;">
+                                {{last_classified.text|safe}}
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <a href ="#" onclick="copyToClipboard({{last_classified.version}})" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-regular fa-copy"></i>
+                                    <p class="small">{% trans 'Copy' %}</p>
+                                </a>
+                            </div>
                         </div>
                         {% if classifieds %}
                         {% for classified in classifieds %}
@@ -166,19 +182,34 @@
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <p class="small">{% trans 'Edit' %}</p>
                                 </a>
-                                <a href ="{% url 'description-update' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                    <p class="small">{% trans 'New from this version' %}</p>
+                                {% if classified.corrections %}
+                                <a href ="{% url 'explanations' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                    <p class="small">{% trans 'View corrections' %}</p>
                                 </a>
+                                {% else %}
                                 <a href ="{% url 'correct-text' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
                                     <i class="fa-solid fa-chalkboard-user"></i>
                                     <p class="small">{% trans 'Correct' %}</p>
                                 </a>
+                                {% endif %}
+                                <a href ="{% url 'description-update' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p class="small">{% trans 'New from this version' %}</p>
+                                </a>
+                                
                             </div>
                              <p>{{classified.updated_at|date:"d b Y"}}</p>
                             <p>{% trans "Style: "%} {{classified.style}}</p>
-
-                            {{classified.text}}
+                            <div id="{{classified.version}}" style="white-space: pre-line;">
+                            {{classified.text|safe}}
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <a href ="#" onclick="copyToClipboard({{classified.version}})" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-regular fa-copy"></i>
+                                    <p class="small">{% trans 'Copy' %}</p>
+                                </a>
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
@@ -199,3 +230,33 @@
     </div>
 </a>
 {% endblock %}
+
+{% block extrajs%}
+
+<script>
+function copyToClipboard(id) {
+    console.log(id);
+    id=String(id);
+    console.log(id);
+  // Get the text field
+  var div = document.getElementById(id);
+    console.log(div);
+    text = div.textContent;
+
+    const paragraphs = text.split("\n");
+    const list = text.split("<br>");
+    
+    const copyText = paragraphs.slice(0, -1).join("\n\n");
+    console.log(copyText);
+    
+
+
+   // Copy the text inside the text field
+  navigator.clipboard.writeText(copyText).then(() => {
+         alert("Text copied successfully");
+  });
+ 
+}
+</script>
+
+{% endblock extrajs %}

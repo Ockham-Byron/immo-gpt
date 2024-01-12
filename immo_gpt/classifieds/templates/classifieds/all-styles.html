@@ -9,11 +9,14 @@
 {% for style in general_styles %}
 <div class="style-card m-2 p-3">
 <p class="title">{{style.short_description}}</p>
-<p class="content">{{style.long_description}}</p>
-<div class="actions">
-    <a>{% trans 'Edit'%}</a>
-    <a>{% trans 'Delete' %}</a>
-    <a>{% trans 'Favorite' %}</a>
+<p class="content">{{style.long_description|safe}}</p>
+<div class="d-flex flex-row">
+    <a href="{% url 'edit-style' style.id %}" class="icon-button ms-2 text-center dark-color">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <p class="small">{% trans 'Edit' %}</p>
+    </a>
+    
+   
 
 </div>
 </div>
@@ -25,13 +28,19 @@
     {% for style in member_styles %}
     <div class="style-card m-2 p-3">
     <p class="title">{{style.short_description}}</p>
-    <p class="content">{{style.long_description}}</p>
-    <div class="actions">
-        <a>{% trans 'Edit'%}</a>
-        <a>{% trans 'Delete' %}</a>
-        <a>{% trans 'Favorite' %}</a>
-    
-    </div>
+    <p class="content">{{style.long_description|safe}}</p>
+    <div class="d-flex flex-row">
+    <a href="{% url 'edit-style' style.id %}" class="icon-button ms-2 text-center dark-color">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <p class="small">{% trans 'Edit' %}</p>
+    </a>
+    <a href="{% url 'delete-style' style.id %}" class="icon-button ms-2 text-center darkest-color">
+        <i class="fa fa-trash"></i>
+        <p class="small">{% trans 'Delete' %}</p>
+    </a>
+   
+
+</div>
     </div>
     {% endfor %}
     </div>

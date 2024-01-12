@@ -1,5 +1,5 @@
 {% extends 'dashboard/base.html'%}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title%}{% trans 'Update Home' %} {% endblock%}
 
@@ -29,12 +29,38 @@
  
         
       
-      <button class="submit" type="submit ">Submit</button>
+      <button class="submit" type="submit ">{% trans 'Submit' %}</button>
       <div class="text-center">
-        <a href="{% url 'home-detail' home.slug %}" class="mid-color">Cancel</a>
+        <a href="{% url 'home-detail' home.slug %}" class="mid-color">{% trans 'Cancel' %}</a>
+      </div>
+      <div class="text-center">
+        <a href="#" type="button" class="dark-color" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fa fa-trash" aria-hidden="true"></i> {% trans 'Delete this home forever' %}</a>
       </div>
   </form>
 </div>
+
+<!-- Modal delete Home-->
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content pt-2 pb-3">
+      <div class="text-center">
+        <img src="{% static 'assets/img/icons/warning-100.png' %}" alt="error icon" />
+        <br/>
+        <h5 class="modal-title mid-color" id="exampleModalLabel">{% trans 'Delete this home ?' %}</h5>
+      </div>
+      <div class="text-center">
+        <p class="darkest-color p-4">{% trans "It will also delete all the descriptions." %}</p>
+        <p class="darkest-color">{% trans "This action is definitive but sometimes you have to make choices..." %}</p>
+      </div>
+      <div class="d-flex justify-content-evenly pb-2">
+        <a href="{% url 'delete-home' home.slug %}"  class="btn btn-mid-color btn-modal" >{% trans "Yes, no regret" %}</a>
+        <a type="button" class="btn btn-outlined btn-modal outline-mid-color" data-bs-dismiss="modal">{% trans 'Cancel' %}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 

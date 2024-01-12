@@ -3,18 +3,22 @@
 
 {% block content %}
 {% include 'classifieds/loading.html' %}
-<h1>{% trans 'Corrections' %}</h1>
 
-<p>Texte d'origine</p>
-<p>{{classified.text}}</p>
+<h1 class="text-center">{% trans 'Corrections' %}</h1>
 
-<p>Corrections</p>
+{% comment %} <h3>{% trans 'Original text' %}</h3>
+<p style="white-space: pre-line;">{{text1|safe}}</p>
 
-<div class="mt-2" style="white-space: pre-line;">{{classified.corrections}}</div>
+<h3>{% trans 'Corrections' %}</h3>
 
-<h3>{% trans 'Corrected text' %}</h3>
+<div class="mt-2" style="white-space: pre-line;">{{classified.corrections}}</div> {% endcomment %}
+<div class="large-card bg-white rounded-4 p-sm-5 my-3 shadow">
+  <h3>{% trans 'Corrected text' %}</h3>
 
-<div class="mt-2" style="white-space: pre-line;">{{classified.text}}</div>
-
-<a href="{% url 'home-detail' classified.home.slug%}">{% trans 'Back to ' %}{{classified.home.name}}</a>
+  <div class="mt-2" style="white-space: pre-line;">{{classified.text|safe}}</div>
+</div>
+<div class="d-flex justify-content-center mt-2">
+  <a href="{% url 'home-detail' classified.home.slug%}" class="btn btn-rounded btn-mid btn-brand-color me-2">{% trans 'Keep this corrected text' %}</a>
+  <a href ="{% url 'edit-description' classified.slug %}" class="btn btn-rounded btn-mid btn-brand-color ms-2">{% trans 'Edit the corrected text' %}</a>
+</div>
 {% endblock %}

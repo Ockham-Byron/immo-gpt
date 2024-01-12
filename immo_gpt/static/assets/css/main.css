@@ -249,6 +249,10 @@ color:var(--light-color) !important;
 
 /* || Buttons */
 
+.btn-small {
+  max-width:50px !important;
+}
+
 .btn-mid {
   max-width:200px !important;
 }

@@ -1,8 +1,6 @@
 from django import template
 from django.template.loader import render_to_string
 
-import hashlib
-
 register = template.Library()
 
 

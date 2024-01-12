@@ -4,6 +4,8 @@
 {% block title%}{% trans 'Simple update' %} {% endblock%}
 
 {% block content %}
+
+{% include 'classifieds/loading.html' %}
 <!-- Form -->
 <div class="d-flex align-items-center justify-content-center vh-90">
   <form class="kform" method="POST" enctype="multipart/form-data">
@@ -21,9 +23,9 @@
  
         
       
-      <button class="submit" type="submit ">Submit</button>
+      <button class="submit" type="submit " class="trigger-loader">{% trans 'Submit' %}</button>
       <div class="text-center">
-        <a href="/en/dashboard/" class="mid-color">Cancel</a>
+        <a href="/en/dashboard/" class="mid-color">{% trans 'Cancel' %}</a>
       </div>
   </form>
 </div>

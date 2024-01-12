@@ -1,5 +1,6 @@
 from uuid import uuid4
 from tinymce.models import HTMLField
+from django.utils.timezone import now
 from django.utils.translation import gettext as _
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
@@ -87,6 +88,7 @@ class Classified(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   version = models.IntegerField(default=1)
+  is_ai_generated = models.BooleanField(default=False)
   slug = models.SlugField(max_length=255, unique= True, default=None, null=True)
 
   def __str__(self):
@@ -105,6 +107,29 @@ class PieceOfHouse(models.Model):
   piece = models.ForeignKey(Piece, on_delete=models.CASCADE)
   surface = models.FloatField()
   features = models.ManyToManyField(PieceFeature)
+
+class Visit(models.Model):
+  id = models.UUIDField(default = uuid4, editable = False, primary_key=True)
+  home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name="visits", null=True, blank=True)
+  style = models.ForeignKey(Style, on_delete=models.PROTECT, null=True, blank=True )
+  text = models.TextField(blank=False, null=False)
+  corrections = models.TextField(blank=True, null=True)
+  visit_date = models.DateField(blank=True, null=True, default=now)
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  version = models.IntegerField(default=1)
+  is_ai_generated = models.BooleanField(default=False)
+  slug = models.SlugField(max_length=255, unique= True, default=None, null=True)
+
+  def __str__(self):
+     return self.home.name
+  
+  def save(self, *args, **kwargs):
+        super().save()
+        # create slug
+        if not self.slug:
+            self.slug = slugify(self.home.name + '_' + str(_("visit") + '_' + str(self.id))) 
+        super(Visit, self).save(*args, **kwargs)
 
 
 

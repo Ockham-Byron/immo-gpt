@@ -26,6 +26,10 @@ img#sidebar-logo {
   width:40px;
 }
 
+.nav-link:focus{
+  color:var(--mid-color) !important;
+}
+
 @media  screen and (max-width:767px) {
   #sidebar {
     height: 55px;
