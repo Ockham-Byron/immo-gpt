@@ -19,6 +19,7 @@ urlpatterns = [
   #styles
   path(_('styles'), styles, name='styles'),
   path(_('add-style'), add_style, name='add-style'),
+  path(_('add-style-from-scratch'), add_style_from_scratch, name='add-style-from-scratch'),
   path(_('define-style'), define_style_from_text, name='define-style-from-text'), 
   path(_('define-style/<slug>'), define_style_from_classified, name='define-style-from-classified'), 
   path(_('edit-style/<id>'), edit_style, name='edit-style'),

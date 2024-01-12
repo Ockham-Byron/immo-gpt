@@ -46,5 +46,10 @@ class AddEditStyle(forms.ModelForm):
       'short_description': forms.TextInput(attrs={
     "placeholder": _("Title")}),
       }
+    
+class DefineStyleFromText(forms.Form):
+    text= forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+
+
 
                          

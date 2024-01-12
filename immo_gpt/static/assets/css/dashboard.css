@@ -36,4 +36,15 @@ img#sidebar-logo {
   }
 }
 
+/* Buttons */
+
+.button-card {
+  width:300px;
+}
+
+@media screen and (min-width:768px) {
+.button-card {
+  width:450px;
+}
+}
 

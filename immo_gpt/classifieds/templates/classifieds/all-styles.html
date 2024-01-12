@@ -1,10 +1,10 @@
 {% extends "dashboard/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% block content%}
 
-<h1>{% trans 'Styles' %}</h1>
+<h1 class="text-center">{% trans 'Styles' %}</h1>
 
-<h2>{% trans 'General Styles' %}</h2>
+<h2 class="mt-3">{% trans 'General Styles' %}</h2>
 <div class="d-flex flex-wrap">
 {% for style in general_styles %}
 <div class="style-card m-2 p-3">
@@ -22,7 +22,7 @@
 </div>
 {% endfor %}
 </div>
-<h2>{% trans 'Your styles'%}</h2>
+<h2 class="mt-3">{% trans 'Your styles'%}</h2>
 
 <div class="d-flex flex-wrap">
     {% for style in member_styles %}
@@ -34,10 +34,7 @@
         <i class="fa-solid fa-pen-to-square"></i>
         <p class="small">{% trans 'Edit' %}</p>
     </a>
-    <a href="{% url 'delete-style' style.id %}" class="icon-button ms-2 text-center darkest-color">
-        <i class="fa fa-trash"></i>
-        <p class="small">{% trans 'Delete' %}</p>
-    </a>
+    
    
 
 </div>
@@ -45,4 +42,13 @@
     {% endfor %}
     </div>
 
+
+<!-- Float button -->
+<a href="{% url 'add-style'  %}" class="float btn">
+    <i class="fa-solid fa-plus my-float"></i>
+    <div class="label-container">
+        <div class="label-text">{% trans 'Add' %}</div>
+        
+    </div>
+</a>
 {% endblock%}

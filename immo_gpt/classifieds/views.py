@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.utils.text import slugify
-from .forms import AddHomeForm, AddFirstDescription, AddEditStyle
+from .forms import AddHomeForm, AddFirstDescription, AddEditStyle, DefineStyleFromText
 from .const import *
 from openai import OpenAI
 
@@ -113,7 +113,9 @@ def create_description_update_classified(style, text):
    
    return response.choices[0].message.content
 
-# Create your views here.
+# VIEWS
+
+# Styles
 @login_required
 def styles(request):
   user = request.user
@@ -128,27 +130,38 @@ def styles(request):
 
 @login_required
 def add_style(request):
+  return render(request, "classifieds/style-add.html")
+
+@login_required
+def add_style_from_scratch(request):
+  form = AddEditStyle()
   if request.method=='POST':
-    short_description=request.POST.get('short_description')
-    long_description=request.POST.get('long_description')
-    style=Style(agent=request.user, short_description=short_description, long_description=long_description)
+    form = AddEditStyle(request.POST)
+    style=form.save(commit=False)
+    style.agent=request.user
     style.save()
+    messages.success(request, _('The style has been successfully created'))
     return redirect('styles')
 
-  return render(request, "classifieds/define-style.html")
+  return render(request, "classifieds/style-create-edit.html", {'form': form})
+
 
 @login_required
 def define_style_from_text(request):
+  form = DefineStyleFromText()
 
   if request.method == "POST":
-    text=request.POST.get("text")
-    long_description = define_style_from_reference(text)
-    short_description = give_style_short_description(long_description)
-    style = Style(agent=request.user, short_description = short_description, long_description=long_description)
-    style.save()
-    return redirect('styles')
+    form = DefineStyleFromText(request.POST)
+    if form.is_valid():
+      text=request.POST.get("text")
+      long_description = define_style_from_reference(text)
+      short_description = give_style_short_description(long_description)
+      style = Style(agent=request.user, short_description = short_description, long_description=long_description)
+      style.save()
+      messages.success(request, _('The style has been successfully created'))
+      return redirect('styles')
 
-  return render(request, "classifieds/define-style-from-text.html")
+  return render(request, "classifieds/define-style-from-text.html", {'form': form})
 
 @login_required
 def define_style_from_classified(request, slug):

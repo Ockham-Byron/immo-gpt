@@ -1,29 +1,31 @@
 {% extends 'dashboard/base.html'%}
 {% load i18n %}
 
-{% block title%}{% trans 'Simple update' %} {% endblock%}
+{% block title%}{% trans 'Define style from reference' %} {% endblock%}
 
 {% block content %}
+
+{% include 'classifieds/loading.html' %}
+
 <!-- Form -->
 <div class="d-flex align-items-center justify-content-center vh-90">
-  <form class="kform" method="POST" enctype="multipart/form-data">
+  <form class="kform kform-large" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     
-    <p class="title">{% trans 'Add a style from text' %}</p>
+    <p class="title">{% trans 'Define a style from a text' %}</p>
     
       
 
       <p class="label mt-3">{% trans "Paste a text here and we analyze its style for you !" %}</p>
     
-        <textarea name="text" cols="40" rows="5" placeholder={% trans "Paste here" %} id="id_classified">
-</textarea>
+      {{form.text}}
 
  
         
       
-      <button class="submit" type="submit ">Submit</button>
+      <button class="submit trigger-loader" type="submit">{% trans 'Submit' %}</button>
       <div class="text-center">
-        <a href="/en/dashboard/" class="mid-color">Cancel</a>
+        <a href="{% url 'add-style' %}" class="mid-color">{% trans 'Cancel' %}</a>
       </div>
   </form>
 </div>

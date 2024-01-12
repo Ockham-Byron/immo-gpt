@@ -28,8 +28,10 @@ Style:
   ☐ rendre traduisible les styles d'admin
   ✔ editer @done(24-01-11 11:35)
   ✔ supprimer @done(24-01-11 11:35)
-  ☐ ajouter message reussite ajout style
+  ✔ ajouter message reussite ajout style @done(24-01-12 10:40)
+  ☐ changer le prompt pour que le style ne parle pas du contenu
   ☐ si le texte copie est trop court, mettre un message d'erreur
+  ☐ mettre en masonry dans all-styles
 
 Stripe:
   ☐ ajouter module de paiement

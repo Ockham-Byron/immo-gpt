@@ -54,7 +54,14 @@
 {% endif %}
 
 
-
+<!-- Float button -->
+<a href="{% url 'add-home'  %}" class="float btn">
+    <i class="fa-solid fa-plus my-float"></i>
+    <div class="label-container">
+        <div class="label-text">{% trans 'Add' %}</div>
+        
+    </div>
+</a>
 
 
 {% endblock %}

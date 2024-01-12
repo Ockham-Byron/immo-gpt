@@ -1,0 +1,26 @@
+{% extends "dashboard/base.html" %}
+
+{% load i18n static %}
+
+{% block title%}{% trans "Add Style" %}{% endblock%}
+
+{% block content %}
+
+<div class="d-flex justify-content-center flex-wrap">
+    <a href="{% url 'add-style-from-scratch' %}">
+      <div class="button-card p-3 text-center bg-white rounded-3 m-2">
+        <img src="{% static 'assets/img/icons/write.png' %}" alt="error icon" />
+        <p class="darkest-color">{% trans 'Add a description of a new style' %}</p>
+      </div>
+    </a>
+
+    <a href="{% url 'define-style-from-text' %}">
+      <div class="button-card p-3 text-center bg-white rounded-3 m-2">
+        <img src="{% static 'assets/img/icons/magia.png' %}" alt="error icon" />
+        <p class="darkest-color">{% trans 'Ask the AI to define the style from a text you like' %}</p>
+      </div>
+    </a>
+</div>
+
+
+{% endblock %}
