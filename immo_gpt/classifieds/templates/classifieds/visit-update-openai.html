@@ -14,13 +14,13 @@
     <p class="title">{% trans 'New version' %}</p>
 
       <select class="form-select" name="style">
-        <option selected value="{{classified.style.pk}}">{% trans "Same style" %} ({{classified.style}})</option>
+        <option selected value="{{visit.style.pk}}">{% trans "Same style" %} ({{visit.style}})</option>
         {% for style in styles %}
         <option value="{{style.pk}}">{{style.short_description}}</option>
         {% endfor %}
       </select>
 
-       <a href="{% url 'add-style' %}" class="mid-color">{% trans 'Add style' %}</a>
+      <a href="{% url 'add-style' %}" class="mid-color">{% trans 'Add style' %}</a>
 
  
         

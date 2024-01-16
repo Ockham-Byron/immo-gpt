@@ -27,10 +27,17 @@ urlpatterns = [
 
   #visits
   path(_('add-visit/<slug>'), add_visit, name='add-visit'),
+  path(_('edit-visit/<slug>'), edit_visit, name='edit-visit'),
+  path(_('visit-update/<slug>'), visit_update_with_openai, name='visit-update'),
+  path(_('delete-visit/<slug>'),delete_visit, name='delete-visit'),
+  path(_('correct-report/<slug>'), correct_report, name='correct-report'),
+  path(_('define-style-from-visit/<slug>'), define_style_from_visit, name='define-style-from-visit'),
     
   #corrections
   path(_('correct-text/<slug>'), correct_text, name="correct-text"),
-  path(_('corrections-explanations/<slug>'), explanations, name="explanations"),
+  path(_('corrections-explanations/<slug>'), explanations, name="∫explanations"),
+
+
 
 
 ] 

@@ -10,7 +10,7 @@
 
 <div class="d-flex flex-column">
     <h1 class="text-center">{{home.name}}</h1>
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center mb-3">
         <p class = "home-tag mx-2">{{home.surface}} m2 </p>
         <p class = "home-tag mx-2">{{home.price|intspace}} € </p>
     </div>
@@ -91,8 +91,25 @@
 </table>
 </div> {% endcomment %}
 
+<!-- Nav tabs -->
+  <ul class="horizontal-tab nav nav-tabs justify-content-center" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" data-bs-toggle="tab" href="#descriptions">{% trans "Descriptions" %}</a>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-link" data-bs-toggle="tab" href="#visits">{% trans "Visits' Reports" %} ({{visits_count}})</a>
+     
+    </li>
+    
+  </ul>
+
+  <!-- Tab panes -->
+
+<div class="tab-content">
 <!-- Descriptions Start -->
-<div class="d-flex flex-row">
+<div id="descriptions" class="container tab-pane active mt-3">
+<div  class="d-flex flex-row ">
     <h4>{% trans 'Description' %}</h4>
     {% if last_classified %}
     
@@ -230,32 +247,34 @@
     </div>
 {% endif %}
 {% endif %}
+</div>
 <!-- Descriptions End -->
 
 <!-- Visits Start -->
-<div class="d-flex flex-row">
-    <h4>{% trans 'Visits' %}</h4>
+<div id="visits" class="container tab-pane fade mt-3">
+<div   class=" d-flex flex-row">
+    <h4>{% trans "Visit's report" %}</h4>
     
     <a href ="{% url 'add-visit' home.slug%}" class="icon-button ms-2 text-center darkest-color">
     <i class="fa-regular fa-file-lines"></i>
-    <p class="small">{% trans 'Add Visit' %}</p>
+    <p class="small">{% trans "Add Visit's report" %}</p>
     
     </a>
 </div>
 
-{% if last_classified %}
+{% if last_visit %}
     <div class="mt-5">
         <div role="tabpanel">
             <div class="row">
                 <div class="col-md-3 col-12">
                     <div class="list-group" id="myList" role="tablist">
-                        <a class="k-list-group-item list-group-item list-group-item-action active mb-3 p-3 shadow  "
-                            data-bs-toggle="list" href="#description-version{{last_classified.version}}" role="tab">{% trans 'Version' %} {{last_classified.version}}
+                    <a class="k-list-group-item list-group-item list-group-item-action active mb-3 p-3 shadow  "
+                            data-bs-toggle="list" href="#{{last_visit.slug}}" role="tab">{{last_visit.visit_date|date:"d b Y"}}
                         </a>
-                        {% for classified in classifieds%}
+                        {% for visit in visits %}
                         <a class="k-list-group-item list-group-item list-group-item-action mb-3 p-3 shadow" 
-                            data-bs-toggle="list" href="#description-version{{classified.version}}" role="tab">
-                            {% trans 'Version' %} {{classified.version}}
+                            data-bs-toggle="list" href="#{{visit.slug}}" role="tab">
+                            {{visit.visit_date|date:"d b Y"}}
                         </a>
                         {% endfor %}
                         
@@ -263,82 +282,32 @@
                 </div>
                 <div class="col-md-9 col-12">
                     <div class="tab-content">
-                        <div class="k-tab-pane tab-pane fade active show shadow" id="description-version{{last_classified.version}}" role="tabpanel">
+                    <div class="k-tab-pane tab-pane fade active show shadow" id="{{last_visit.slug}}" role="tabpanel">
                             <div class="d-flex flex-row">
-                                <h4 class="dark-color">{% trans 'Version' %} {{last_classified.version}}</h4>
-                                <a href ="{% url 'edit-description' last_classified.slug %}" class="icon-button ms-2 text-center darkest-color">
+                                <h4 class="dark-color">{% trans "Visit's Report" %} </h4>
+                                <a href ="{% url 'edit-visit' last_visit.slug %}" class="icon-button ms-2 text-center darkest-color">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <p class="small">{% trans 'Edit' %}</p>
                                 </a>
-                                {% if last_classified.is_ai_generated == False %}
-                                    {% if last_classified.corrections %}
-                                    <a href ="{% url 'explanations' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
-                                        <i class="fa-solid fa-chalkboard-user"></i>
-                                        <p class="small">{% trans 'View corrections' %}</p>
-                                    </a>
-                                    {% else %}
-                                    <a href ="{% url 'correct-text' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
-                                        <i class="fa-solid fa-chalkboard-user"></i>
-                                        <p class="small">{% trans 'Correct' %}</p>
-                                    </a>
-                                    {% endif %}
-                                {% endif %}
-                                {% if last_classified.style %}
-                                <a href ="{% url 'description-update' last_classified.slug%}" class="icon-button ms-2 text-center mid-color">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                    <p class="small">{% trans 'New from this version' %}</p>
-                                </a>
-                                
-                                {% else %}
-                                <a href ="{% url 'define-style-from-classified' last_classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                    <p class="small">{% trans 'Analyse the style of this text' %}</p>
-                                </a>
-
-                                {% endif %}
-                            </div>
-                            <p>{{last_classified.updated_at|date:"d b Y"}}</p>
-                            {% if last_classified.style %}
-                            <p>{% trans "Style: "%} {{last_classified.style}}</p>
-                            {% endif %}
-                            <div id="{{last_classified.version}}" style="white-space: pre-line;">
-                                {{last_classified.text|safe}}
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <a href ="#" onclick="copyToClipboard({{last_classified.version}})" class="icon-button ms-2 text-center mid-color">
-                                    <i class="fa-regular fa-copy"></i>
-                                    <p class="small">{% trans 'Copy' %}</p>
-                                </a>
-                            </div>
-                        </div>
-                        {% if classifieds %}
-                        {% for classified in classifieds %}
-                        <div class="k-tab-pane tab-pane fade shadow " id="description-version{{classified.version}}" role="tabpanel">
-                            <div class="d-flex flex-row">
-                                <h4 class="dark-color">{% trans 'Version' %} {{classified.version}}</h4>
-                                <a href ="{% url 'edit-description' classified.slug %}" class="icon-button ms-2 text-center darkest-color">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                    <p class="small">{% trans 'Edit' %}</p>
-                                </a>
-                                {% if classified.corrections %}
-                                <a href ="{% url 'explanations' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                {% if last_visit.corrections %}
+                                <a href ="{% url 'visit-explanations' last_visit.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
                                     <i class="fa-solid fa-chalkboard-user"></i>
                                     <p class="small">{% trans 'View corrections' %}</p>
                                 </a>
                                 {% else %}
-                                <a href ="{% url 'correct-text' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                <a href ="{% url 'correct-report' last_visit.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
                                     <i class="fa-solid fa-chalkboard-user"></i>
                                     <p class="small">{% trans 'Correct' %}</p>
                                 </a>
                                 {% endif %}
-                                {% if classified.style %}
-                                <a href ="{% url 'description-update' classified.slug%}" class="icon-button ms-2 text-center mid-color">
+                                {% if last_visit.style %}
+                                <a href ="{% url 'visit-update' last_visit.slug%}" class="icon-button ms-2 text-center mid-color">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'New from this version' %}</p>
                                 </a>
                                 
                                 {% else %}
-                                <a href ="{% url 'define-style-from-classified' classified.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                <a href ="{% url 'define-style-from-visit' last_visit.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <p class="small">{% trans 'Analyse the style of this text' %}</p>
                                 </a>
@@ -346,19 +315,71 @@
                                 {% endif %}
                                 
                             </div>
-                             <p>{{classified.updated_at|date:"d b Y"}}</p>
-                            {% if classified.style %}
-                                <p>{% trans "Style: "%} {{classified.style}}</p>
+                             <h4 class="darkest-color">{% trans "Visit's date : "%}<span class="dark-color">{{last_visit.visit_date|date:"d b Y"}}</span></h4>
+                            {% if last_visit.style %}
+                                <p>{% trans "Style: "%} {{last_visit.style}}</p>
                             {% endif %}
-                            <div id="{{classified.version}}" style="white-space: pre-line;">
-                            {{classified.text|safe}}
+                            
+                            <div id="{{last_visit.copy_id}}" style="white-space: pre-line;">
+                                {{last_visit.text|safe}}
                             </div>
                             <div class="d-flex justify-content-end">
-                                <a href ="#" onclick="copyToClipboard({{classified.version}})" class="icon-button ms-2 text-center mid-color">
+                                <a href ="#" onclick="copyToClipboard({{last_visit.copy_id}})" class="icon-button ms-2 text-center mid-color">
                                     <i class="fa-regular fa-copy"></i>
                                     <p class="small">{% trans 'Copy' %}</p>
                                 </a>
                             </div>
+                           
+                        </div>
+                        {% for visit in visits %}
+                        <div class="k-tab-pane tab-pane fade shadow " id="{{visit.slug}}" role="tabpanel">
+                            <div class="d-flex flex-row">
+                                <h4 class="dark-color">{% trans "Visit's Report" %} </h4>
+                                <a href ="{% url 'edit-visit' visit.slug %}" class="icon-button ms-2 text-center darkest-color">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    <p class="small">{% trans 'Edit' %}</p>
+                                </a>
+                                {% if visit.corrections %}
+                                <a href ="{% url 'visit-explanations' visit.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                    <p class="small">{% trans 'View corrections' %}</p>
+                                </a>
+                                {% else %}
+                                <a href ="{% url 'correct-report' visit.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                    <p class="small">{% trans 'Correct' %}</p>
+                                </a>
+                                {% endif %}
+                                {% if visit.style %}
+                                <a href ="{% url 'visit-update' visit.slug%}" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p class="small">{% trans 'New from this version' %}</p>
+                                </a>
+                                
+                                {% else %}
+                                <a href ="{% url 'define-style-from-visit' visit.slug%}" class="icon-button ms-2 text-center mid-color trigger-loader">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p class="small">{% trans 'Analyse the style of this text' %}</p>
+                                </a>
+
+                                {% endif %}
+                                
+                            </div>
+                             <h4 class="darkest-color">{% trans "Visit's date : "%}<span class="dark-color">{{visit.visit_date|date:"d b Y"}}</span></h4>
+                            {% if visit.style %}
+                                <p>{% trans "Style: "%} {{visit.style}}</p>
+                            {% endif %}
+                            
+                            <div id="{{visit.copy_id}}" style="white-space: pre-line;">
+                                {{visit.text|safe}}
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <a href ="#" onclick="copyToClipboard({{visit.copy_id}})" class="icon-button ms-2 text-center mid-color">
+                                    <i class="fa-regular fa-copy"></i>
+                                    <p class="small">{% trans 'Copy' %}</p>
+                                </a>
+                            </div>
+                           
                         </div>
                         {% endfor %}
                     </div>
@@ -367,9 +388,9 @@
         </div>
     </div>
 {% endif %}
-{% endif %}
+</div>
 <!-- Visits End -->
-
+</div>
 <!-- Float button -->
 <a href="{% url 'update-home' home.slug %}" class="float btn">
     <i class="fa fa-pen my-float"></i>
@@ -384,7 +405,7 @@
 
 <script>
 function copyToClipboard(id) {
-    console.log(id);
+    console.log("id: " + id);
     id=String(id);
     console.log(id);
   // Get the text field

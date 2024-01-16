@@ -41,7 +41,11 @@
           <span class="regular-text">€</span>
         </div>
         <div class="item">
+          {% if object.visits %}
+          <span class="big-text">{{object.visits.count}}</span>
+          {% else %}
           <span class="big-text">0</span>
+          {% endif %}
           <span class="regular-text">{% trans 'Visits' %}</span>
         </div>
       </div>

@@ -269,3 +269,11 @@ a.btn:hover>div.label-container{
 .style-card .actions a {
   color:var(--dark-color);
 }
+
+ul.horizontal-tab .nav-link {
+  color:var(--dark-color);
+}
+
+ul.horizontal-tab .nav-link:hover{
+  color:var(--mid-color);
+}

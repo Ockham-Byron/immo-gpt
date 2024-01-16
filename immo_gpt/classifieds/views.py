@@ -366,6 +366,7 @@ def agent_homes(request):
 
   return render(request, 'classifieds/agent-homes.html', context=context)
 
+@login_required
 def home_detail(request, slug):
   home = get_object_or_404(Home, slug=slug)
   is_complete = False
@@ -388,11 +389,25 @@ def home_detail(request, slug):
     classifieds = None
     last_classified = None
 
+  if Visit.objects.filter(home=home).exists():
+    visits = Visit.objects.filter(home=home)
+    last_visit = visits.latest('visit_date')
+    visits = visits.order_by('-visit_date')[1:]
+    visits_count = visits.count() + 1
+
+  else:
+    visits = None
+    last_visit = None
+    visits_count = 0
+
   context = {'home':home,
              'classifieds':classifieds,
              'last_classified' :last_classified,
              'is_complete':is_complete,
              'is_detailed':is_detailed,
+             'visits':visits,
+             'last_visit':last_visit,
+             'visits_count':visits_count
              }
 
   return render(request, 'classifieds/home-detail.html', context=context)
@@ -430,6 +445,10 @@ def explanations(request, slug):
 @login_required
 def add_visit(request, slug):
   home = get_object_or_404(Home, slug=slug)
+  if Visit.objects.filter(home=home).exists():
+    visits = Visit.objects.filter(home=home)
+  else:
+    visits=None
   form = AddVisit()
   if request.method == "POST":
     form = AddVisit(request.POST)
@@ -437,9 +456,87 @@ def add_visit(request, slug):
       visit=form.save(commit=False)
       visit.agent=request.user
       visit.home=home
+      if visits:
+        visit.version = visits.count()+1
       visit.save()
       return redirect('home-detail', home.slug)
     
   return render(request, "classifieds/visit-create-edit.html", {'form': form, 'home':home})
+
+
+@login_required
+def edit_visit(request, slug):
+  visit = get_object_or_404(Visit, slug=slug)
+  form = AddVisit(instance=visit)
+  if request.method == "POST":
+    form = AddVisit(request.POST, instance=visit)
+    if form.is_valid():
+      visit=form.save()
+      return redirect('home-detail', visit.home.slug)
     
+  return render(request, "classifieds/visit-create-edit.html", {'form': form, 'visit':visit})
+
+def visit_update_with_openai(request, slug):
+  visit = Visit.objects.get(slug=slug)
+  home = visit.home
+  visits = Visit.objects.filter(home=home)
+  styles = Style.objects.filter(agent = None) | Style.objects.filter(agent=request.user)
+  styles = styles.exclude(pk=visit.style.pk)
   
+  
+  if request.method == 'POST':
+    style_input = request.POST.get('style')
+    style=Style.objects.get(pk=style_input)
+    report = visit.text
+    text = create_description_update_classified(style.long_description, report)
+    visit.text = text
+    visit.style = style
+    visit.save()  
+    return redirect('home-detail', slug=home.slug)
+
+  context = {'home': home,
+             'visit':visit, 
+             'styles':styles}
+
+  return render(request, 'classifieds/visit-update-openai.html', context=context)
+
+@login_required
+def delete_visit(request, slug):
+  visit=get_object_or_404(Visit, slug=slug)
+  visit.delete()
+  return redirect('home-detail', visit.home.slug)
+
+@login_required
+def correct_report(request, slug):
+  visit = get_object_or_404(Visit, slug=slug)
+  text=visit.text
+  formatted_prompt1=LANGUAGE_PROMPT.format(text=text)
+  language=detect_language(formatted_prompt1)
+  formatted_prompt=CORRECT_TEXT_PROMPT.format(text=text, language=language)
+  corrected_text=openai_correct_text(formatted_prompt)
+  visit.text=corrected_text
+  visit.save()
+  context = {
+    
+    'visit':visit
+  }
+
+  return render(request, "classifieds/visit-explanations.html", context=context)
+    
+@login_required
+def define_style_from_visit(request, slug):
+  visit = get_object_or_404(Visit, slug=slug)
+  styles = Style.objects.filter(agent = None) | Style.objects.filter(agent=request.user)
+  long_description = define_style_from_reference(visit.text)
+  short_description = give_style_short_description(long_description)
+  if styles.filter(short_description=short_description).exists():
+    style = Style.objects.get(short_description=short_description)
+    visit.style = style
+    visit.save()
+    return redirect('home-detail', visit.home.slug)
+  else:
+    style = Style(agent=request.user, short_description = short_description, long_description=long_description)
+    style.save()
+    visit.style = style
+    visit.save()
+    return redirect('styles')

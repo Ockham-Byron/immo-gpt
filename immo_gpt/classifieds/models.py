@@ -121,6 +121,10 @@ class Visit(models.Model):
   is_ai_generated = models.BooleanField(default=False)
   slug = models.SlugField(max_length=255, unique= True, default=None, null=True)
 
+  @property
+  def copy_id(self):
+     return self.version + 1000
+
   def __str__(self):
      return self.home.name + '-visit' + self.visit_date 
   
