@@ -25,6 +25,7 @@ urlpatterns = i18n_patterns(
     path('admin/', admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),
     path('tinymce/', include('tinymce.urls')),
+    path('stripe/', include("djstripe.urls", namespace="djstripe")),
     path('', include('users.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('classifieds/', include('classifieds.urls')),

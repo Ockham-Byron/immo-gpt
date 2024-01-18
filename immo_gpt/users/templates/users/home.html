@@ -10,6 +10,78 @@
 
 
     </div>
+
+   
+
+ <section class="subscription-section">
+        <div class="content">
+            {% for product in products %}
+            <div class="basic box">
+                <h2 class="title">{{product.metadata.name}}</h2>
+                <div class="view">
+                    <div class="icon">
+                        <img src="https://i.postimg.cc/2jcfMcf4/hot-air-balloon.png" alt="hot-air-balloon">
+                    </div>
+                    <p class="plan-description mt-2">{{ product.metadata.description }}</p>
+                    <div class="cost">
+                        {% for plan in product.plan_set.all %}
+          <div>
+            <p class="amount">{{ plan.human_readable_price }}</p>
+          </div>
+        {% endfor %}
+                        
+                    </div>
+                </div>
+                <div class="description">
+                    <ul>
+                        <li>{% trans 'Feature' %}</li>
+                        <li>{% trans 'Feature' %}</li>
+                        <li>{% trans 'Feature' %}</li>
+                    </ul>
+                </div>
+                <div class="button">
+                    <button type="submit" >{% trans 'START FREE 7 DAYS TRIAL' %}</button>
+                </div>
+            </div>
+            {% endfor %}
+           
+    
+           
+
+        </div>
+    </section>
+
+<div class="columns plan-selector">
+{% for product in products %}
+  <div class="column">
+    <div {% if product.metadata.is_default %}class="is-selected"{% endif %}>
+      <span class="icon">
+        <i class="fa {% if product.metadata.is_default %}fa-check{% else %}fa-circle{% endif %}">
+        </i>
+      </span>
+      <p class="plan-name">{{ product.metadata.name }}</p>
+      <p class="plan-description">{{ product.metadata.description }}</p>
+      <div class="plan-price">
+        {% for plan in product.plan_set.all %}
+          <div>
+            <p class="heading">{{ plan.nickname }}</p>
+            <p>{{ plan.description }}</p>
+            <p>{{ plan.human_readable_price }}</p>
+          </div>
+        {% endfor %}
+      </div>
+      <ul class="features">
+         {% for feature in product.metadata.features %}
+         <li>
+           <span class="icon"><i class="fa fa-check"></i></span>
+           <span class="feature">{{ feature }}</span>
+         </li>
+         {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endfor %}
+</div>
   </div>
 </div>
 {% endblock %}

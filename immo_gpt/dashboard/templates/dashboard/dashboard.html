@@ -2,8 +2,16 @@
 {% load i18n %}
 {% block content %}
 
-<div class="d-flex align-items-start flex-column h-100 p-5">
+
 <h1>{% trans "Dashboard" %}</h1>
 <h2>{{user.pseudo}}</h2>
-</div>
+
+ <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+<stripe-pricing-table 
+pricing-table-id="{{pricing_table_id}}"
+publishable-key="{{stripe_public_key}}"
+client-reference-id="{{ request.user.id }}"
+>
+</stripe-pricing-table>
+
 {% endblock %}

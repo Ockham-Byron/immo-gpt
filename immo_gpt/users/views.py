@@ -1,5 +1,11 @@
-from django.shortcuts import render, redirect
+from . import metadata
+from django.shortcuts import render, redirect, reverse
+import stripe
+from djstripe.settings import djstripe_settings
+from djstripe.models import Subscription
 from django.http import HttpResponseRedirect
+from django.http.response import JsonResponse 
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
@@ -14,6 +20,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordContextMixin
 from django.views.generic.edit import FormView
+from djstripe.models import Product, Plan
 from .forms import *
 
 from django.template.loader import render_to_string
@@ -26,6 +33,8 @@ from .tokens import account_activation_token
 import os
 
 User = get_user_model()
+
+
 
 # send email with verification link
 def verify_email(request):
@@ -97,7 +106,21 @@ def change_email(request):
 
 # Create your views here.
 def home_view(request):
-    return render(request, 'users/home.html')
+    
+    products= Product.objects.all().order_by('default_price')
+    for product in products:
+            if product.id == metadata.Monthly.stripe_id:
+                product.metadata = metadata.Monthly
+            elif product.id == metadata.Yearly.stripe_id:
+                product.metadata = metadata.Yearly
+            elif product.id == metadata.LifeTime.stripe_id:
+                product.metadata = metadata.LifeTime
+    
+    
+
+    context = {'products': products,
+               }
+    return render(request, 'users/home.html', context=context)
 
 
 
@@ -354,3 +377,31 @@ def delete_account(request):
     request.user.profile_pic.delete()
     request.user.delete()
     return redirect(to="bye")
+
+
+def subscription_confirm(request):
+    # set our stripe keys up
+    stripe.api_key = djstripe_settings.STRIPE_SECRET_KEY
+
+    # get the session id from the URL and retrieve the session object from Stripe
+    session_id = request.GET.get("session_id")
+    session = stripe.checkout.Session.retrieve(session_id)
+
+    # get the subscribing user from the client_reference_id we passed in above
+    client_reference_id = int(session.client_reference_id)
+    subscription_holder = get_user_model().objects.get(id=client_reference_id)
+    # sanity check that the logged in user is the one being updated
+    assert subscription_holder == request.user
+
+    # get the subscription object form Stripe and sync to djstripe
+    subscription = stripe.Subscription.retrieve(session.subscription)
+    djstripe_subscription = Subscription.sync_from_stripe_data(subscription)
+
+    # set the subscription and customer on our user
+    subscription_holder.subscription = djstripe_subscription
+    subscription_holder.customer = djstripe_subscription.customer
+    subscription_holder.save()
+
+    # show a message to the user and redirect
+    messages.success(request, f"You've successfully signed up. Thanks for the support!")
+    return render(request, 'dashboard/subscription-complete.html')

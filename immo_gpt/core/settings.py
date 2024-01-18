@@ -52,7 +52,8 @@ INSTALLED_APPS = [
 
     #tiers_apps
     'tinymce',
-    "bootstrap_datepicker_plus",
+    'bootstrap_datepicker_plus',
+    'djstripe',
     
 ]
 
@@ -177,7 +178,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend']
 
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'login'
 
 #duration of the cookies to remember the user credentials
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
@@ -196,3 +197,10 @@ TINYMCE_DEFAULT_CONFIG = {
 "removeformat | help",
 }
 
+STRIPE_LIVE_SECRET_KEY = env('STRIPE_PUBLISHABLE_KEY')
+# STRIPE_TEST_SECRET_KEY = env('STRIPE_SECRET_KEY')
+STRIPE_LIVE_MODE = False # Change to True in production
+DJSTRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_KEY')
+DJSTRIPE_USE_NATIVE_JSONFIELD = True  # We recommend setting to True for new installations
+DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
+STRIPE_PRICING_TABLE_ID = env('STRIPE_PRICING_TABLE_ID')

@@ -18,6 +18,10 @@ def path_and_rename(instance, filename):
     # return the whole path to the file
     return os.path.join(upload_to, filename)
 
+#subscriptions functions 
+
+
+
 
 
 class CustomUser(AbstractUser):
@@ -45,6 +49,8 @@ class CustomUser(AbstractUser):
     slug = models.SlugField(max_length=255, unique= True, default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    subscription = models.ForeignKey('djstripe.Subscription', null=True, blank=True, on_delete=models.SET_NULL, help_text="The user's Stripe subscription object, if it exists.")
+    customer = models.ForeignKey('djstripe.Customer', null=True, blank=True, on_delete=models.SET_NULL,help_text="The user's Stripe Customer object, if it exists")    
 
     def __str__(self):
         return self.username
